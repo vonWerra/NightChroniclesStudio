@@ -1,0 +1,45 @@
+{
+  "TOPIC": "Vznik Československa",
+  "LANGUAGES": ["CS", "EN"],
+  "EPISODES": "auto",
+  "EPISODE_MINUTES": 60,
+  "EPISODE_COUNT_RANGE": {
+    "min": 4,
+    "max": 8
+  },
+  "MSP_PER_EPISODE": 5,
+  "MSP_MAX_WORDS": 30,
+  "DESCRIPTION_MAX_SENTENCES": 3,
+  "SERIES_CONTEXT_SENTENCES": {
+    "min": 2,
+    "max": 4
+  },
+  "ORDERING": "chronological",
+  "TOLERANCE_MIN": 55,
+  "TOLERANCE_MAX": 65,
+  "MARKERS": {
+    "begin_template": "===BEGIN_SECTION:{LANG}===",
+    "end_template": "===END_SECTION:{LANG}===",
+    "bullet": "-"
+  },
+  "FACTUALITY": {
+    "no_dialogue": true,
+    "no_speculation": true,
+    "consensus_only": true,
+    "note_disputes_briefly": true
+  },
+  "SOURCES": {
+    "PER_EPISODE": {
+      "min": 3,
+      "max": 7
+    },
+    "FORMAT": "name-only"
+  },
+  "OUTPUT": {
+    "mode": "multi-file",
+    "basename": "osnova",
+    "directory": "./output",
+    "use_project_structure": true,
+    "project_root": "D:/NightChronicles/projects"
+  }
+}

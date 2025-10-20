@@ -1,0 +1,5 @@
+EPISODE FUSION (OPTIONAL)
+You will receive five narration paragraphs (segments 1–5) for Episode {EPISODE_NUMBER} of {SERIES_TITLE}, all in {LANG}.
+Task: stitch them into ONE smooth, continuous paragraph with natural micro-transitions; remove redundant hooks/handoffs; preserve chronology and factual content.
+Do NOT add new information. Keep total length within the sum of original segments ±2%.
+Return one single paragraph only. No headings, no lists, no markup.

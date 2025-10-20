@@ -1,0 +1,8 @@
+FIX PASS (APPLY STRICTLY)
+The previous output failed these checks:
+- {ISSUE_LIST}
+
+Regenerate the same segment with the same constraints, correcting ALL issues above.
+Keep Target Words: {WORD_TARGET} (±{WORD_TOLERANCE_PERCENT}%).
+Preserve factual content; do not introduce new entities; keep transitions concise.
+Return output in the same strict format (single paragraph + '---' + VALIDATION YAML).

@@ -1,0 +1,31 @@
+refactor(NarrationTab): migrate to fs_helpers utilities
+
+Consolidate filesystem helper functions into shared utils module to eliminate code duplication and improve maintainability.
+
+Changes:
+- Add utils.fs_helpers with normalize_name, resolve_topic_dir, find_topic_in_index
+- Refactor NarrationTab to use shared utilities via wrapper methods
+- Remove duplicated implementations (~40-50 lines of duplicate code)
+- Add comprehensive unit tests (13 tests, all passing)
+
+Implementation details:
+- Created wrapper methods in NarrationTab for backward compatibility
+- All call sites unchanged (self._normalize_name etc. still work)
+- Original lengthy implementations removed from NarrationTab
+- Fixed indentation issues during cleanup
+
+Files changed:
+- New: tests/utils/test_fs_helpers.py (13 tests)
+- Modified: studio_gui/src/main.py (imports, wrappers, removed duplicates)
+- Modified: studio_gui/src/utils/fs_helpers.py (utility implementations)
+
+BREAKING: None (internal refactor only, fully backward compatible)
+
+TESTED:
+- Unit tests: pytest tests/utils/ ✓ (13/13 passed)
+- Syntax check: python -m py_compile studio_gui/src/main.py ✓
+- GUI smoke test: manual verification ✓ (topics/languages/episodes load correctly)
+
+Next steps:
+- Apply same pattern to PostProcessTab
+- Optional: Remove wrappers in future PR (direct calls to utils)

@@ -1,0 +1,387 @@
+{
+  "language": "CS",
+  "topic": "Vznik Československa",
+  "series_title": "Vznik Československa: Historický příběh samostatnosti",
+  "series_context": [
+    "Série mapuje klíčové události vedoucí k založení Československa v roce 1918.",
+    "Zahrnuje politické, sociální a mezinárodní aspekty vzniku nového státu.",
+    "Důraz je kladen na prameny a různé historické interpretace."
+  ],
+  "episodes": [
+    {
+      "index": 1,
+      "title": "Evropský kontext a české země před rokem 1914",
+      "description": [
+        "Přehled politické situace v Evropě a v českých zemích před první světovou válkou.",
+        "Analýza národnostních a sociálních poměrů v Rakousko-Uhersku.",
+        "Příprava české společnosti na změny v důsledku konfliktu."
+      ],
+      "msp": [
+        {
+          "timestamp": "10:00",
+          "text": "Rakousko-Uhersko bylo mnohonárodnostní monarchií do roku 1914",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "12:30",
+          "text": "České země měly průmyslovou a kulturní elitu podporující samostatnost",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Nárůst nacionalismu ovlivnil vztahy mezi Čechy a Němci",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Evropské mocnosti byly před válkou v napjatých aliancích",
+          "sources_segment": [
+            "MacMillan, The War That Ended Peace"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "První světová válka začala 1914-07-28 podle gregoriánského kalendáře",
+          "sources_segment": [
+            "MacMillan, The War That Ended Peace"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:00",
+          "12:30",
+          "11:00",
+          "12:00",
+          "10:30"
+        ],
+        "sum_minutes": 56
+      },
+      "viewer_takeaway": "České země byly součástí složité monarchie s rostoucím nacionalismem před válkou.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle",
+        "MacMillan, The War That Ended Peace"
+      ],
+      "confidence_note": "Existují různé interpretace nacionalismu, všechny zdůrazňují jeho význam před válkou."
+    },
+    {
+      "index": 2,
+      "title": "České politické hnutí a zahraniční exil během války",
+      "description": [
+        "Vývoj českého politického odporu proti Rakousko-Uhersku během první světové války.",
+        "Role zahraničních exilových skupin a jejich diplomatické aktivity.",
+        "Vznik Československé národní rady v Paříži."
+      ],
+      "msp": [
+        {
+          "timestamp": "11:30",
+          "text": "České politické strany byly během války potlačovány v monarchii",
+          "sources_segment": [
+            "Kárník, Dějiny Československa II"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Tomáš Masaryk a Edvard Beneš vedli exilové aktivity v zahraničí",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Československá národní rada vznikla v roce 1916 v Paříži",
+          "sources_segment": [
+            "Kárník, Dějiny Československa II"
+          ]
+        },
+        {
+          "timestamp": "12:30",
+          "text": "Exilové skupiny získaly podporu Francie, Velké Británie a USA",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Československé legie bojovaly na straně Dohody od 1917",
+          "sources_segment": [
+            "Kárník, Dějiny Československa II"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "11:30",
+          "12:00",
+          "11:00",
+          "12:30",
+          "11:30"
+        ],
+        "sum_minutes": 58
+      },
+      "viewer_takeaway": "Exilové vedení a legie hrály klíčovou roli v mezinárodní podpoře samostatnosti.",
+      "sources_used": [
+        "Kárník, Dějiny Československa II",
+        "Skilling, Czechoslovakia's Interrupted Revolution"
+      ],
+      "confidence_note": "Historikové se shodují na významu exilu, liší se v hodnocení vnitřního odporu."
+    },
+    {
+      "index": 3,
+      "title": "Říjnová revoluce a její dopad na československé plány",
+      "description": [
+        "Dopady ruské Říjnové revoluce 1917 na československé legie a politiku.",
+        "Změny v mezinárodní situaci po revoluci.",
+        "Reakce československých představitelů na nové geopolitické podmínky."
+      ],
+      "msp": [
+        {
+          "timestamp": "12:00",
+          "text": "Říjnová revoluce proběhla 1917-11-07 (gregoriánský kalendář)",
+          "sources_segment": [
+            "Figes, A People's Tragedy"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Ruská revoluce přerušila podporu Dohody pro legie v Rusku",
+          "sources_segment": [
+            "Kárník, Dějiny Československa II"
+          ]
+        },
+        {
+          "timestamp": "12:30",
+          "text": "Legie se musely stáhnout přes Sibiř během občanské války",
+          "sources_segment": [
+            "Kárník, Dějiny Československa II"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Masaryk upravil strategii na základě nových mezinárodních podmínek",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Revoluce změnila rovnováhu sil ve střední Evropě v roce 1917–1918",
+          "sources_segment": [
+            "Figes, A People's Tragedy"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "11:30",
+          "12:30",
+          "11:00",
+          "11:30"
+        ],
+        "sum_minutes": 58
+      },
+      "viewer_takeaway": "Říjnová revoluce zásadně ovlivnila československé legie a diplomatické strategie.",
+      "sources_used": [
+        "Figes, A People's Tragedy",
+        "Kárník, Dějiny Československa II",
+        "Skilling, Czechoslovakia's Interrupted Revolution"
+      ],
+      "confidence_note": "Diskuse existují o míře vlivu revoluce na legie a exilové strategie."
+    },
+    {
+      "index": 4,
+      "title": "Vyhlášení samostatnosti a formování státu v roce 1918",
+      "description": [
+        "Události vedoucí k vyhlášení Československé republiky 1918-10-28.",
+        "Role Národního výboru a klíčových osobností.",
+        "První kroky nové vlády a státní správy."
+      ],
+      "msp": [
+        {
+          "timestamp": "12:30",
+          "text": "Národní výbor československý vyhlásil samostatnost 1918-10-28",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Masaryk byl zvolen prvním prezidentem v listopadu 1918",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Vznikly první ministerstva a státní instituce nového státu",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Vznik Československa byl uznán Dohodovými mocnostmi v roce 1919",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Vznik státu byl reakcí na rozpad Rakousko-Uherska po válce",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:30",
+          "11:30",
+          "12:00",
+          "11:00",
+          "11:30"
+        ],
+        "sum_minutes": 58
+      },
+      "viewer_takeaway": "Samostatnost Československa byla vyhlášena 28. října 1918 a rychle institucionalizována.",
+      "sources_used": [
+        "Kárník, Dějiny Československa III",
+        "Skilling, Czechoslovakia's Interrupted Revolution"
+      ],
+      "confidence_note": "Konsenzus je vysoký, spory jsou spíše o detaily formování institucí."
+    },
+    {
+      "index": 5,
+      "title": "Mezinárodní uznání a hranice nového státu",
+      "description": [
+        "Proces mezinárodního uznání Československa po první světové válce.",
+        "Stanovení hranic a řešení národnostních otázek.",
+        "Dopady versailleského systému na Československo."
+      ],
+      "msp": [
+        {
+          "timestamp": "12:00",
+          "text": "Versailleská smlouva potvrdila vznik Československa v roce 1919",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Hranice byly určeny Pařížskou mírovou konferencí 1919–1920",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "12:30",
+          "text": "Národnostní menšiny tvořily významnou část obyvatelstva státu",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Spory o území s Maďarskem a Polskem pokračovaly po válce",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Mezinárodní společenství podpořilo stabilitu nového státu",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "11:30",
+          "12:30",
+          "11:00",
+          "11:30"
+        ],
+        "sum_minutes": 58
+      },
+      "viewer_takeaway": "Mezinárodní uznání a hranice byly klíčové pro stabilitu Československa po válce.",
+      "sources_used": [
+        "Kárník, Dějiny Československa III",
+        "Orzoff, Battle for the Castle",
+        "Skilling, Czechoslovakia's Interrupted Revolution"
+      ],
+      "confidence_note": "Existují různé názory na hranice, ale konsenzus o uznání státu je široký."
+    },
+    {
+      "index": 6,
+      "title": "Výzvy nového státu a konsolidace demokracie 1918–1920",
+      "description": [
+        "Politické a sociální výzvy v prvních letech Československa.",
+        "Založení demokratických institucí a ústava z roku 1920.",
+        "Integrace různých národnostních skupin do státu."
+      ],
+      "msp": [
+        {
+          "timestamp": "12:00",
+          "text": "Ústava Československa byla přijata v roce 1920",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Politické strany reprezentovaly široké spektrum názorů",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        },
+        {
+          "timestamp": "12:30",
+          "text": "Menšinové otázky byly řešeny zákony o národnostních právech",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Ekonomická obnova byla prioritou po válce",
+          "sources_segment": [
+            "Kárník, Dějiny Československa III"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Demokracie byla konsolidována přes volby a parlamentní systém",
+          "sources_segment": [
+            "Skilling, Czechoslovakia's Interrupted Revolution"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "11:30",
+          "12:30",
+          "11:00",
+          "11:30"
+        ],
+        "sum_minutes": 58
+      },
+      "viewer_takeaway": "Československo v letech 1918–1920 vybudovalo demokratický stát s národnostními zákony.",
+      "sources_used": [
+        "Kárník, Dějiny Československa III",
+        "Skilling, Czechoslovakia's Interrupted Revolution"
+      ],
+      "confidence_note": "Historici se shodují na demokratické konsolidaci, spory jsou o efektivitu menšinové politiky."
+    }
+  ]
+}

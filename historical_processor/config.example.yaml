@@ -1,0 +1,25 @@
+voice_ids:
+  cs: "j9jfwdrw7BRfcR43Qohk"
+  en: "j9jfwdrw7BRfcR43Qohk"
+  de: "j9jfwdrw7BRfcR43Qohk"
+  fr: "j9jfwdrw7BRfcR43Qohk"
+  es: "j9jfwdrw7BRfcR43Qohk"
+
+elevenlabs_models:
+  default: "eleven_multilingual_v2"
+
+voice_settings:
+  default:
+    stability: 0.8
+    similarity_boost: 0.3
+    style: 0.0
+    use_speaker_boost: true
+    speed: 1.05   # 0.7–1.2, 1.0 = normální tempo
+  cs:
+    speed: 0.93
+
+segments_base: "D:\\NightChronicles\\Claude_vystup\\outputs"
+outlines_base: "D:\\NightChronicles\\outline-generator\\output"
+output_base: "D:\\NightChronicles\\elevenlabs_vystup\\outputs"
+log_file: "D:\\NightChronicles\\elevenlabs_vystup\\processing_log.json"
+backup_dir: "D:\\NightChronicles\\elevenlabs_vystup\\backups"

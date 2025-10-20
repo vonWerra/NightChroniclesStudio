@@ -1,0 +1,22 @@
+# requirements-all-dev.txt
+# Development and testing dependencies for NightChronicles
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Linting / formatting / static analysis
+black>=23.12.0
+isort>=5.13.0
+ruff>=0.20.0
+mypy>=1.7.0
+flake8>=6.1.0
+pylint>=3.0.0
+
+# Type/stub deps (optional)
+types-requests
+
+# Local development helpers
+pre-commit

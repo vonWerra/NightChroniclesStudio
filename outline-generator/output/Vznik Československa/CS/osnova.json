@@ -1,0 +1,390 @@
+{
+  "language": "CS",
+  "topic": "Vznik Československa",
+  "series_title": "Vznik Československa: Historický příběh národa",
+  "series_context": [
+    "Série mapuje klíčové události vedoucí k založení Československa v roce 1918.",
+    "Zahrnuje politické, sociální a mezinárodní aspekty vzniku nového státu.",
+    "Zároveň představuje hlavní historické prameny a různé interpretace odborníků."
+  ],
+  "episodes": [
+    {
+      "index": 1,
+      "title": "Evropské a české poměry před první světovou válkou",
+      "description": [
+        "Přehled politické situace v Rakousko-Uhersku před rokem 1914.",
+        "Význam českého národního hnutí a jeho požadavků.",
+        "Mezinárodní vztahy a přípravy na válku v Evropě."
+      ],
+      "msp": [
+        {
+          "timestamp": "10:00",
+          "text": "Rakousko-Uhersko bylo mnohonárodnostní monarchií před rokem 1914.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "České národní hnutí usilovalo o větší autonomii v monarchii.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Evropské mocnosti se připravovaly na ozbrojený konflikt v roce 1914.",
+          "sources_segment": [
+            "MacMillan, The War That Ended Peace"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Rakousko-uherské elity řešily národnostní napětí v rámci monarchie.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Česká společnost byla rozdělena mezi loajalisty a nacionalisty.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:00",
+          "12:00",
+          "11:00",
+          "11:30",
+          "10:30"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Před první světovou válkou byla česká společnost i monarchie politicky napjatá.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle",
+        "MacMillan, The War That Ended Peace"
+      ],
+      "confidence_note": "Existují různé interpretace národnostních konfliktů, ale konsenzus o napětí před válkou."
+    },
+    {
+      "index": 2,
+      "title": "První světová válka a československé legie",
+      "description": [
+        "Průběh první světové války a její dopad na české země.",
+        "Vznik a role československých legií v zahraničí.",
+        "Politické aktivity českých exilových představitelů."
+      ],
+      "msp": [
+        {
+          "timestamp": "12:00",
+          "text": "První světová válka začala 1914-07-28 podle gregoriánského kalendáře.",
+          "sources_segment": [
+            "MacMillan, The War That Ended Peace"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Československé legie vznikly v Rusku, Francii a Itálii během války.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Legie bojovaly na straně Dohody proti centrálním mocnostem.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Tomáš Garrigue Masaryk vedl zahraniční politické úsilí za samostatnost.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Válka výrazně změnila politickou mapu Evropy po roce 1918.",
+          "sources_segment": [
+            "MacMillan, The War That Ended Peace"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "11:30",
+          "11:00",
+          "10:30",
+          "11:30"
+        ],
+        "sum_minutes": 56
+      },
+      "viewer_takeaway": "Československé legie a exilová politika byly klíčové pro vznik samostatného státu.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle",
+        "MacMillan, The War That Ended Peace"
+      ],
+      "confidence_note": "Scholars agree na význam legií, diskutují o jejich konkrétním vlivu na diplomatické výsledky."
+    },
+    {
+      "index": 3,
+      "title": "Vznik Československé národní rady a zahraniční diplomacie",
+      "description": [
+        "Založení Československé národní rady v roce 1916 v Paříži.",
+        "Diplomatické snahy o uznání samostatnosti Československa.",
+        "Role klíčových osobností v zahraniční politice."
+      ],
+      "msp": [
+        {
+          "timestamp": "11:00",
+          "text": "Československá národní rada vznikla 1916-11-14 v Paříži.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Masaryk, Beneš a Štefánik vedli diplomatické úsilí za samostatnost.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Rada získala podporu Dohody pro budoucí samostatný stát.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Diplomatické aktivity zahrnovaly i propagandu a veřejné projevy.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Rada koordinovala i vojenské aktivity československých legií.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "11:00",
+          "12:00",
+          "11:30",
+          "10:30",
+          "10:30"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Československá národní rada byla klíčovým subjektem pro mezinárodní uznání.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Existují různé názory na relativní význam jednotlivých představitelů v radě."
+    },
+    {
+      "index": 4,
+      "title": "Říjnová revoluce a její dopad na československé legie",
+      "description": [
+        "Říjnová revoluce 1917 v Rusku a její vliv na legie.",
+        "Složitá situace legií během ruské občanské války.",
+        "Dopady revoluce na mezinárodní postavení Československa."
+      ],
+      "msp": [
+        {
+          "timestamp": "11:30",
+          "text": "Říjnová revoluce proběhla 1917-11-07 podle gregoriánského kalendáře.",
+          "sources_segment": [
+            "Figes, A People's Tragedy"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Legie v Rusku se zapojily do bojů proti bolševikům.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Situace legií komplikovala jejich návrat do Evropy.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Revoluce změnila geopolitické poměry ve prospěch Dohody.",
+          "sources_segment": [
+            "Figes, A People's Tragedy"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Legie získaly mezinárodní pozornost díky své roli v Rusku.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "11:30",
+          "12:00",
+          "11:00",
+          "10:30",
+          "11:00"
+        ],
+        "sum_minutes": 56
+      },
+      "viewer_takeaway": "Říjnová revoluce zásadně ovlivnila osud československých legií a diplomacii.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle",
+        "Figes, A People's Tragedy"
+      ],
+      "confidence_note": "Diskuse existují o míře vlivu revoluce na legie a československou politiku."
+    },
+    {
+      "index": 5,
+      "title": "Vyhlášení samostatnosti a formování Československa",
+      "description": [
+        "Události vedoucí k vyhlášení Československa 1918-10-28.",
+        "Role Národního výboru a Masaryka v procesu vzniku státu.",
+        "První kroky nového státu v mezinárodním kontextu."
+      ],
+      "msp": [
+        {
+          "timestamp": "12:00",
+          "text": "Československo bylo vyhlášeno 1918-10-28 v Praze.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Národní výbor převzal moc po rozpadu monarchie.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:30",
+          "text": "Masaryk byl zvolen prvním prezidentem nového státu.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Nový stát získal rychlé uznání od vítězných mocností.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Vznik Československa znamenal změnu politické mapy Evropy.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "11:00",
+          "11:30",
+          "10:30",
+          "10:30"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Vyhlášení Československa bylo výsledkem dlouhého politického procesu a zahraniční podpory.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Konsenzus existuje o datu a klíčových aktérech, spory jsou o detaily politických jednání."
+    },
+    {
+      "index": 6,
+      "title": "Konsolidace státu a mezinárodní uznání po roce 1918",
+      "description": [
+        "Politické a sociální výzvy prvních měsíců Československa.",
+        "Mezinárodní smlouvy potvrzující existenci státu.",
+        "Významná rozhodnutí Národního shromáždění."
+      ],
+      "msp": [
+        {
+          "timestamp": "11:30",
+          "text": "Národní shromáždění schválilo ústavní zákony v roce 1919.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Versailleská smlouva 1919 potvrdila hranice Československa.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:00",
+          "text": "Stát čelil výzvám integrace různých národnostních skupin.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Mezinárodní uznání posílilo pozici Československa v Evropě.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Vznikaly instituce pro správu a obranu nového státu.",
+          "sources_segment": [
+            "Kárník, Dějiny Československa I"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "11:30",
+          "12:00",
+          "11:00",
+          "10:30",
+          "10:30"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Konsolidace a mezinárodní uznání byly klíčové pro stabilitu Československa.",
+      "sources_used": [
+        "Kárník, Dějiny Československa I",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Diskuse se týkají míry úspěšnosti integrace národnostních menšin v raném státě."
+    }
+  ]
+}

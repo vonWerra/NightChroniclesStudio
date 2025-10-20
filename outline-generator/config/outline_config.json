@@ -1,0 +1,18 @@
+{
+  "topic": "Vznik Československa",
+  "languages": ["CS", "EN", "ES", "FR", "DE"],
+  "episodes": 6,
+  "episode_minutes": 60,
+  "episode_count_range": {"min": 3, "max": 6},
+  "msp_per_episode": 5,
+  "msp_max_words": 15,
+  "description_max_sentences": 4,
+  "series_context_sentences": {"min": 1, "max": 3},
+  "ordering": "chronological",
+  "tolerance_min": 55,
+  "tolerance_max": 65,
+  "sources": {
+    "per_episode": {"min": 3, "max": 5},
+    "format": "name-only"
+  }
+}

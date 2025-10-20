@@ -1,0 +1,32 @@
+[
+  {
+    "timestamp": "2025-09-24T12:28:41.296039",
+    "topic": "vznik_ceskoslovenska",
+    "language": "CS",
+    "episode": "001",
+    "stats": {
+      "segments_count": 5,
+      "total_chars": 44635,
+      "chunks_count": 6,
+      "gpt_cost": 0.16384,
+      "elevenlabs_cost": 13.989
+    }
+  },
+  {
+    "timestamp": "2025-09-25T22:41:13.012794",
+    "topic": "vznik_ceskoslovenska",
+    "language": "CS",
+    "episode": "001",
+    "stats": {
+      "segments_count": 5,
+      "total_chars": 46783,
+      "chunks_count": 6,
+      "gpt_cost": 0.162365,
+      "elevenlabs_cost": 14.0133,
+      "total_cost": 14.175664999999999,
+      "processing_time": 1824.486427,
+      "start_time": "2025-09-25T22:10:48.526388",
+      "end_time": null
+    }
+  }
+]

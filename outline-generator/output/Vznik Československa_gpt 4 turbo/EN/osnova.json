@@ -1,0 +1,401 @@
+{
+  "language": "EN",
+  "topic": "Vznik Československa",
+  "series_title": "The Birth of Czechoslovakia: From Empire to Nation",
+  "series_context": [
+    "This series examines the political, social, and international developments leading to the creation of Czechoslovakia in 1918.",
+    "It draws on primary documents and recent scholarship to present a chronological account of the nation's founding.",
+    "Key terms such as 'nation' and 'state' are defined according to cited historians to avoid anachronism."
+  ],
+  "episodes": [
+    {
+      "index": 1,
+      "title": "Czech and Slovak Lands under Austria-Hungary",
+      "description": [
+        "This episode explores the status of Czech and Slovak territories within the Austro-Hungarian Empire before World War I.",
+        "It covers administrative divisions, national movements, and key demographic data.",
+        "The episode defines 'nation' as used by contemporary actors and scholars."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:00",
+          "text": "In 1910, the Czech lands were part of Cisleithania, Austria-Hungary (population ca. 6.8 million).",
+          "sources_segment": [
+            "Healy, Vienna and the Fall of the Habsburg Empire",
+            "Agnew, The Czechs and the Lands of the Bohemian Crown"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Slovak territories were administered as Upper Hungary (present-day Slovakia) within the Kingdom of Hungary.",
+          "sources_segment": [
+            "Teich & Kováč, Slovakia in History",
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        },
+        {
+          "timestamp": "22:00",
+          "text": "Czech national revival movements emphasized language, culture, and historical rights (per Agnew, 2013).",
+          "sources_segment": [
+            "Agnew, The Czechs and the Lands of the Bohemian Crown"
+          ]
+        },
+        {
+          "timestamp": "35:00",
+          "text": "Slovak national identity was shaped by Magyarization policies and linguistic activism (per Teich & Kováč, 2011).",
+          "sources_segment": [
+            "Teich & Kováč, Slovakia in History"
+          ]
+        },
+        {
+          "timestamp": "50:00",
+          "text": "'Nation' was defined by contemporary actors as a community with shared language and history.",
+          "sources_segment": [
+            "Agnew, The Czechs and the Lands of the Bohemian Crown"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "09:30",
+          "11:30",
+          "13:00",
+          "15:00",
+          "12:00"
+        ],
+        "sum_minutes": 61
+      },
+      "viewer_takeaway": "Czech and Slovak lands experienced distinct administrative and cultural conditions under Austria-Hungary before 1914.",
+      "sources_used": [
+        "Agnew, The Czechs and the Lands of the Bohemian Crown",
+        "Teich & Kováč, Slovakia in History",
+        "Healy, Vienna and the Fall of the Habsburg Empire"
+      ],
+      "confidence_note": "Primary census data and administrative records are extant; scholarly consensus on national movements is strong."
+    },
+    {
+      "index": 2,
+      "title": "World War I and the Question of National Self-Determination",
+      "description": [
+        "This episode analyzes the impact of World War I on Czech and Slovak aspirations for autonomy.",
+        "It discusses exile politics, the formation of the Czechoslovak National Council, and Allied diplomacy.",
+        "Key debates on self-determination are presented with reference to Wilsonian principles."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:00",
+          "text": "In 1914, Czech and Slovak politicians pursued autonomy within Austria-Hungary, not independence.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "13:00",
+          "text": "The Czechoslovak National Council was established in Paris in 1916 by Masaryk, Beneš, and Štefánik.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        },
+        {
+          "timestamp": "24:00",
+          "text": "Czechoslovak Legions fought with the Entente, notably in Russia, France, and Italy (1917–1918).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "38:00",
+          "text": "President Wilson’s Fourteen Points (1918-01-08) promoted national self-determination for Central Europe.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "53:00",
+          "text": "Allied recognition of the Czechoslovak National Council as a de facto government occurred in June 1918.",
+          "sources_segment": [
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "11:00",
+          "14:00",
+          "15:00",
+          "13:00"
+        ],
+        "sum_minutes": 65
+      },
+      "viewer_takeaway": "World War I catalyzed Czech and Slovak leaders to pursue independence with Allied support.",
+      "sources_used": [
+        "Orzoff, Battle for the Castle",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Healy, Vienna and the Fall of the Habsburg Empire"
+      ],
+      "confidence_note": "Primary diplomatic records and legion documents are extant; some debate on exile strategies exists."
+    },
+    {
+      "index": 3,
+      "title": "The Collapse of Austria-Hungary and the Proclamation of Czechoslovakia",
+      "description": [
+        "This episode details the disintegration of Austria-Hungary and the events of October 1918.",
+        "It covers the Prague National Committee, local uprisings, and the official declaration of the Czechoslovak state.",
+        "Competing interpretations of the timeline are noted."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:00",
+          "text": "On 1918-10-28 (Gregorian), the National Committee in Prague proclaimed the independent Czechoslovak state.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        },
+        {
+          "timestamp": "14:00",
+          "text": "Local councils in Slovakia declared union with the new state between 1918-10-30 and 1918-11-01.",
+          "sources_segment": [
+            "Teich & Kováč, Slovakia in History"
+          ]
+        },
+        {
+          "timestamp": "27:00",
+          "text": "The Austro-Hungarian government recognized the loss of control over Czech lands by late October 1918.",
+          "sources_segment": [
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        },
+        {
+          "timestamp": "40:00",
+          "text": "The Martin Declaration (1918-10-30) formalized Slovak support for the Czechoslovak state.",
+          "sources_segment": [
+            "Teich & Kováč, Slovakia in History"
+          ]
+        },
+        {
+          "timestamp": "54:00",
+          "text": "Competing chronologies exist for the exact timing of state formation (see Orzoff, 2009; Teich & Kováč, 2011).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Teich & Kováč, Slovakia in History"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "13:00",
+          "13:00",
+          "13:00",
+          "14:00",
+          "12:00"
+        ],
+        "sum_minutes": 65
+      },
+      "viewer_takeaway": "The Czechoslovak state was proclaimed in October 1918 amid Austria-Hungary’s collapse.",
+      "sources_used": [
+        "Orzoff, Battle for the Castle",
+        "Healy, Vienna and the Fall of the Habsburg Empire",
+        "Teich & Kováč, Slovakia in History"
+      ],
+      "confidence_note": "Primary proclamations and council records are extant; disputes concern precise timing of events."
+    },
+    {
+      "index": 4,
+      "title": "International Recognition and the Paris Peace Conference",
+      "description": [
+        "This episode examines the diplomatic process of gaining international recognition for Czechoslovakia.",
+        "It discusses the Paris Peace Conference, border negotiations, and the role of the Allied powers.",
+        "Key disputes over territorial claims are summarized."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:00",
+          "text": "The Allies formally recognized Czechoslovakia as an independent state in November 1918.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "13:00",
+          "text": "Czechoslovak representatives participated in the Paris Peace Conference (1919-01–1919-06).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        },
+        {
+          "timestamp": "25:00",
+          "text": "Border disputes arose with Poland (Teschen), Hungary (southern Slovakia), and Germany (Sudetenland).",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "39:00",
+          "text": "The Treaty of Saint-Germain (1919-09-10) confirmed Czechoslovakia’s independence and borders.",
+          "sources_segment": [
+            "Healy, Vienna and the Fall of the Habsburg Empire"
+          ]
+        },
+        {
+          "timestamp": "54:00",
+          "text": "Historians dispute the extent of Allied influence on border decisions (see Cornwall, 2000; Orzoff, 2009).",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Orzoff, Battle for the Castle"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "12:00",
+          "14:00",
+          "15:00",
+          "12:00"
+        ],
+        "sum_minutes": 65
+      },
+      "viewer_takeaway": "Czechoslovakia’s international status and borders were established through Allied diplomacy and treaties.",
+      "sources_used": [
+        "Orzoff, Battle for the Castle",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Healy, Vienna and the Fall of the Habsburg Empire"
+      ],
+      "confidence_note": "Diplomatic records are extant; border negotiations remain a subject of historiographical debate."
+    },
+    {
+      "index": 5,
+      "title": "Constitution, Citizenship, and State-Building",
+      "description": [
+        "This episode explores the legal and institutional foundations of the new Czechoslovak state.",
+        "It covers the 1920 Constitution, citizenship laws, and minority rights.",
+        "Disputes over the implementation of minority protections are noted."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:00",
+          "text": "The Provisional Constitution was adopted on 1918-11-13; the definitive Constitution on 1920-02-29.",
+          "sources_segment": [
+            "Mamatey & Luža, A History of the Czechoslovak Republic",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "13:00",
+          "text": "Czechoslovak citizenship was defined by descent and residence as of 1918-10-28.",
+          "sources_segment": [
+            "Mamatey & Luža, A History of the Czechoslovak Republic"
+          ]
+        },
+        {
+          "timestamp": "25:00",
+          "text": "The Constitution guaranteed minority rights per international treaties (Saint-Germain, 1919).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "38:00",
+          "text": "State institutions included a bicameral parliament and an elected president (per Mamatey & Luža, 1973).",
+          "sources_segment": [
+            "Mamatey & Luža, A History of the Czechoslovak Republic"
+          ]
+        },
+        {
+          "timestamp": "52:00",
+          "text": "Historians debate the practical enforcement of minority protections (see Orzoff, 2009; Mamatey & Luža, 1973).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Mamatey & Luža, A History of the Czechoslovak Republic"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "12:00",
+          "13:00",
+          "14:00",
+          "14:00"
+        ],
+        "sum_minutes": 65
+      },
+      "viewer_takeaway": "Czechoslovakia’s legal framework established democratic institutions and defined citizenship and minority rights.",
+      "sources_used": [
+        "Mamatey & Luža, A History of the Czechoslovak Republic",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Constitutional texts are extant; scholarly debate concerns the effectiveness of minority policies."
+    },
+    {
+      "index": 6,
+      "title": "Legacy and Early Challenges of the New State",
+      "description": [
+        "This episode assesses the immediate aftermath of Czechoslovakia’s founding and its early challenges.",
+        "It covers economic integration, social policy, and the legacy of the founding generation.",
+        "Competing interpretations of state cohesion are briefly noted."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:00",
+          "text": "The new state integrated diverse regions with differing economic structures and legal systems.",
+          "sources_segment": [
+            "Mamatey & Luža, A History of the Czechoslovak Republic",
+            "Teich & Kováč, Slovakia in History"
+          ]
+        },
+        {
+          "timestamp": "13:00",
+          "text": "Land reform (1919–1923) redistributed ca. 28% of arable land (estimate range, Med uncertainty).",
+          "sources_segment": [
+            "Teich & Kováč, Slovakia in History"
+          ]
+        },
+        {
+          "timestamp": "25:00",
+          "text": "Universal suffrage was implemented for men and women in 1920 (per Mamatey & Luža, 1973).",
+          "sources_segment": [
+            "Mamatey & Luža, A History of the Czechoslovak Republic"
+          ]
+        },
+        {
+          "timestamp": "38:00",
+          "text": "The legacy of Masaryk, Beneš, and Štefánik shaped national memory and political discourse.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "53:00",
+          "text": "Scholars debate the degree of cohesion among Czechs, Slovaks, and minorities (see Teich & Kováč, 2011).",
+          "sources_segment": [
+            "Teich & Kováč, Slovakia in History"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "12:00",
+          "12:00",
+          "13:00",
+          "13:00",
+          "15:00"
+        ],
+        "sum_minutes": 65
+      },
+      "viewer_takeaway": "Czechoslovakia faced integration and identity challenges, with its legacy debated by historians.",
+      "sources_used": [
+        "Mamatey & Luža, A History of the Czechoslovak Republic",
+        "Teich & Kováč, Slovakia in History",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Primary economic and legal records are extant; scholarly debate concerns state cohesion and legacy."
+    }
+  ]
+}

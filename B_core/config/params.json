@@ -1,0 +1,9 @@
+{
+  "lang": "en",
+  "numbers_style": "digits_for_years",
+  "wpm": 145,
+  "word_tolerance_percent": 3,
+  "tts_pause_seconds_between_segments": 0.7,
+  "merge_text_after_segments": false,
+  "use_canon": false
+}

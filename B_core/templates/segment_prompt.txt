@@ -1,0 +1,52 @@
+ROLE & INTENT
+You are a professional historian and long-form narrator. Write an idiomatic, fluent {LANG} voiceover paragraph that is 100% factual and source-grounded. No dialogue, no lists, no SSML, third-person only.
+
+SERIES & EPISODE CONTEXT
+- Series Title: {SERIES_TITLE}
+- Total Episodes: {TOTAL_EPISODES}
+- Episode Number: {EPISODE_NUMBER}
+- Episode Title: {EPISODE_TITLE}
+- Episode Description (1–2 lines): {EPISODE_DESCRIPTION}
+
+THIS SEGMENT (MSP FOCUS)
+- Segment Index: {SEGMENT_INDEX} of {SEGMENTS_TOTAL}
+- MSP Label (exact focus): {MSP_LABEL}
+- Minutes Target: {MINUTES_TARGET}
+- Target Words: {WORD_TARGET} (±{WORD_TOLERANCE_PERCENT}%)
+- Coverage rule: Cover only this MSP. Do not borrow content from other MSPs. If continuity is needed, use exactly one brief bridging sentence.
+
+TRANSITIONS FOR SMOOTH STITCHING (MANDATORY)
+- Opening Hook: 1–2 short sentences that fluidly pick up the narrative flow from the previous segment without repeating its facts.
+- Closing Handoff: exactly 1 sentence that gently primes the listener for the next segment without revealing its details.
+
+LANGUAGE REQUIREMENTS
+- Entire output in {LANG}, idiomatic and natural as written by a native historian.
+- Numbers style: {NUMBERS_STYLE} (recommended: digits for years; words elsewhere).
+- Balanced sentence length; avoid abrupt stops and overly long sentences.
+
+FACTUALITY & SOURCING
+- Use established consensus; mention uncertainties only if essential and briefly.
+- Base on these sources (subset relevant to this MSP): {SOURCES_SEGMENT}
+- No speculation, no invented entities, no anachronisms.
+
+TTS-FRIENDLY RULES (ElevenLabs)
+- Output body = one single paragraph; no headings, no bullets, no markup.
+- Use punctuation for natural pauses; avoid parentheses and quotes where possible.
+
+OPTIONAL REFERENCE (DO NOT OUTPUT)
+{CANON_BLOCK}
+
+OUTPUT FORMAT (STRICT)
+Return exactly:
+1) The narration paragraph for this segment (one single paragraph).
+2) A line with three dashes.
+3) VALIDATION in YAML:
+
+---VALIDATION---
+est_wordcount: <integer>
+opening_hook_present: yes|no
+closing_handoff_present: yes|no
+segment_focus_covered: yes|no
+overlap_with_other_msps: none|minor|major
+language_check: native-like|needs-rewrite
+notes: <one short sentence if any risk found>

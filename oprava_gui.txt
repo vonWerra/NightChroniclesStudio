@@ -1,0 +1,342 @@
+Perfektní shrnutí! Souhlasím se všemi body. Připravím kompletní implementaci podle tvého návrhu.
+📋 Implementační plán (stepwise, safe)
+Krok 1: Infrastruktura (bezpečné, žádné změny v UI)
+✓ Vytvořit utils/path_resolver.py
+✓ Vytvořit utils/fs_helpers.py
+✓ Vytvořit utils/__init__.py
+✓ Přidat testy test_path_resolver.py
+```
+
+### Krok 2: Widgets (izolované, žádné změny v logice)
+```
+✓ Vytvořit widgets/log_pane.py (přesun z main.py)
+✓ Vytvořit widgets/__init__.py
+✓ Update importy v main.py (LogPane -> widgets.log_pane)
+```
+
+### Krok 3: Postupná migrace tabů (jeden po druhém)
+```
+✓ PromptsTab: nahradit osnova_root()/prompts_root() -> PathResolver
+✓ NarrationTab: nahradit + přesunout _normalize_name/_resolve_topic_dir
+✓ PostProcessTab: nahradit
+✓ OutlineTab: použít PathResolver pro temp config paths
+```
+
+### Krok 4: Base tab (až po ověření)
+```
+✓ Vytvořit tabs/base_tab.py s common helpers
+✓ Postupně dědit taby z BaseTab
+📂 Soubory k vytvoření
+1. studio_gui/src/utils/__init__.py
+python"""Utility modules for path resolution, filesystem helpers, and validation."""
+
+from .path_resolver import PathResolver
+from .fs_helpers import normalize_name, resolve_topic_dir, find_topic_in_index
+
+__all__ = [
+    "PathResolver",
+    "normalize_name",
+    "resolve_topic_dir",
+    "find_topic_in_index",
+]
+2. studio_gui/src/utils/path_resolver.py
+(Použij tvůj navrhovaný kód - je kompletní a správný)
+3. studio_gui/src/utils/fs_helpers.py
+python"""Filesystem helpers for topic/episode resolution and normalization."""
+from __future__ import annotations
+
+import os
+import unicodedata
+import re
+from pathlib import Path
+from typing import Optional
+
+import structlog
+
+logger = structlog.get_logger(__name__)
+
+
+def normalize_name(name: str) -> str:
+    """Normalize name for case-insensitive, diacritics-insensitive comparison.
+
+    Removes diacritics, converts to lowercase, replaces non-alphanumeric with _.
+
+    Examples:
+        >>> normalize_name("Příšerně žluťoučký kůň")
+        'priserne_zlutoucky_kun'
+        >>> normalize_name("History of Ancient Rome")
+        'history_of_ancient_rome'
+    """
+    try:
+        # Decompose and remove combining characters (diacritics)
+        nfd = unicodedata.normalize('NFKD', name)
+        ascii_str = ''.join(ch for ch in nfd if not unicodedata.combining(ch))
+
+        # Lowercase and slug-ify
+        slug = ascii_str.lower()
+        slug = re.sub(r'[^a-z0-9]+', '_', slug)
+        slug = re.sub(r'_+', '_', slug).strip('_')
+
+        return slug
+    except Exception as e:
+        logger.warning("normalize_name failed, using fallback", name=name, error=str(e))
+        return name.lower().strip()
+
+
+def resolve_topic_dir(root: Path, topic_display: str) -> Path:
+    """Resolve topic directory with case-insensitive matching.
+
+    Tries exact match first, then normalized match.
+    Returns path even if it doesn't exist (caller decides what to do).
+
+    Args:
+        root: Root directory containing topics
+        topic_display: Topic name as displayed in UI
+
+    Returns:
+        Resolved Path (may not exist)
+    """
+    # Try exact match first (fast path)
+    exact = root / topic_display
+    if exact.exists() and exact.is_dir():
+        logger.debug("resolve_topic_dir: exact match", root=str(root), topic=topic_display)
+        return exact
+
+    # Try normalized match (handles case/diacritics)
+    try:
+        if not root.exists():
+            logger.debug("resolve_topic_dir: root doesn't exist, returning exact path", root=str(root))
+            return exact
+
+        target_normalized = normalize_name(topic_display)
+        for entry in root.iterdir():
+            if entry.is_dir() and normalize_name(entry.name) == target_normalized:
+                logger.debug("resolve_topic_dir: normalized match",
+                           root=str(root), topic=topic_display, resolved=entry.name)
+                return entry
+    except Exception as e:
+        logger.warning("resolve_topic_dir: scan failed", root=str(root), error=str(e))
+
+    # Return exact path (may not exist - caller handles)
+    logger.debug("resolve_topic_dir: no match, returning exact path", root=str(root), topic=topic_display)
+    return exact
+
+
+def find_topic_in_index(topic_display: str, index: Optional[dict]) -> Optional[str]:
+    """Find best-matching topic key in a cached index.
+
+    Tries exact match first, then normalized match.
+
+    Args:
+        topic_display: Topic name from UI
+        index: Index dictionary (from fs_index scan)
+
+    Returns:
+        Matched topic key from index, or None
+    """
+    if not index or not isinstance(index, dict):
+        return None
+
+    topics = index.get('topics', {})
+    if not topics:
+        return None
+
+    # Exact match first
+    if topic_display in topics:
+        logger.debug("find_topic_in_index: exact match", topic=topic_display)
+        return topic_display
+
+    # Normalized match
+    target = normalize_name(topic_display)
+    for key in topics.keys():
+        if normalize_name(key) == target:
+            logger.debug("find_topic_in_index: normalized match",
+                       topic=topic_display, matched_key=key)
+            return key
+
+    logger.debug("find_topic_in_index: no match", topic=topic_display)
+    return None
+4. studio_gui/src/widgets/__init__.py
+python"""Reusable UI widgets."""
+
+from .log_pane import LogPane
+
+__all__ = ["LogPane"]
+5. studio_gui/src/widgets/log_pane.py
+python"""Log pane widget for displaying subprocess output."""
+from __future__ import annotations
+
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit
+
+
+class LogPane(QWidget):
+    """Text widget for displaying subprocess stdout/stderr."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        self.view = QTextEdit(self)
+        self.view.setReadOnly(True)
+        layout.addWidget(self.view)
+
+    def append(self, stream: str, text: str) -> None:
+        """Append a line to the log with stream prefix.
+
+        Args:
+            stream: "stdout" or "stderr"
+            text: Line of text to append
+        """
+        prefix = "[OUT]" if stream == "stdout" else "[ERR]"
+        self.view.append(f"{prefix} {text}")
+
+    def clear(self) -> None:
+        """Clear all log content."""
+        self.view.clear()
+6. tests/utils/test_path_resolver.py
+python"""Tests for PathResolver."""
+import pytest
+import os
+from pathlib import Path
+from studio_gui.src.utils.path_resolver import PathResolver
+
+
+def test_module_env_takes_priority(monkeypatch, tmp_path):
+    """Module-specific env var should take priority over NC_OUTPUTS_ROOT."""
+    custom_prompts = tmp_path / "custom_prompts"
+    custom_prompts.mkdir()
+    nc_root = tmp_path / "nc"
+
+    monkeypatch.setenv("PROMPTS_OUTPUT_ROOT", str(custom_prompts))
+    monkeypatch.setenv("NC_OUTPUTS_ROOT", str(nc_root))
+
+    result = PathResolver.prompts_root()
+    assert result == custom_prompts
+
+
+def test_nc_outputs_root_fallback(monkeypatch, tmp_path):
+    """NC_OUTPUTS_ROOT + subdir should be used when module-specific env not set."""
+    nc_root = tmp_path / "nc"
+    nc_root.mkdir()
+
+    monkeypatch.delenv("PROMPTS_OUTPUT_ROOT", raising=False)
+    monkeypatch.setenv("NC_OUTPUTS_ROOT", str(nc_root))
+
+    result = PathResolver.prompts_root()
+    assert result == nc_root / "prompts"
+
+
+def test_cwd_fallback_when_no_env(monkeypatch):
+    """Should fall back to cwd()/outputs/<module> when no env set."""
+    monkeypatch.delenv("PROMPTS_OUTPUT_ROOT", raising=False)
+    monkeypatch.delenv("NC_OUTPUTS_ROOT", raising=False)
+
+    result = PathResolver.prompts_root()
+    assert result == Path.cwd() / "outputs" / "prompts"
+
+
+def test_all_module_roots_available():
+    """All module roots should be accessible."""
+    roots = [
+        PathResolver.osnova_root(),
+        PathResolver.prompts_root(),
+        PathResolver.narration_root(),
+        PathResolver.postproc_root(),
+        PathResolver.tts_root(),
+        PathResolver.export_root(),
+    ]
+
+    # All should return Path objects
+    for root in roots:
+        assert isinstance(root, Path)
+
+
+def test_invalid_module_raises():
+    """Invalid module name should raise ValueError."""
+    with pytest.raises(ValueError, match="Unknown module"):
+        PathResolver.get_root("invalid_module")
+7. Ukázky změn v main.py
+python# ==== IMPORTS (přidat nahoře) ====
+from .utils.path_resolver import PathResolver
+from .utils.fs_helpers import normalize_name, resolve_topic_dir, find_topic_in_index
+from .widgets.log_pane import LogPane
+
+
+# ==== PromptsTab - PŘED ====
+def osnova_root(self) -> str:
+    out_root = os.environ.get("OUTLINE_OUTPUT_ROOT")
+    if out_root:
+        return out_root
+    nc_root = os.environ.get("NC_OUTPUTS_ROOT")
+    if nc_root:
+        return os.path.join(nc_root, "outline")
+    # ... fallback logic
+
+# ==== PromptsTab - PO ====
+def osnova_root(self) -> str:
+    return str(PathResolver.osnova_root())
+
+def prompts_root(self) -> str:
+    return str(PathResolver.prompts_root())
+
+
+# ==== NarrationTab - PŘED ====
+def _normalize_name(self, s: str) -> str:
+    # ... 20 lines of duplication
+
+# ==== NarrationTab - PO ====
+# (remove method, use utils.fs_helpers.normalize_name directly)
+
+
+# ==== PostProcessTab - PŘED ====
+def _resolve_topic_dir(self, root: str, topic_display: str) -> str:
+    # ... duplicated logic
+
+# ==== PostProcessTab - PO ====
+# (remove method, use utils.fs_helpers.resolve_topic_dir)
+```
+
+## ✅ Checklist pro bezpečnou migraci
+```
+FÁZE 1: Příprava (žádné změny v main.py)
+[ ] Vytvořit utils/__init__.py
+[ ] Vytvořit utils/path_resolver.py (tvůj kód)
+[ ] Vytvořit utils/fs_helpers.py
+[ ] Vytvořit widgets/__init__.py
+[ ] Vytvořit widgets/log_pane.py
+[ ] Vytvořit tests/utils/test_path_resolver.py
+[ ] Spustit testy: pytest tests/utils/
+[ ] COMMIT: "feat: add PathResolver and fs_helpers utilities"
+
+FÁZE 2: LogPane migrace (izolovaná změna)
+[✓] Odstranit LogPane třídu z main.py
+[✓] Update všechny importy: from .widgets.log_pane import LogPane
+[ ] Ověřit, že GUI funguje
+[ ] COMMIT: "refactor: extract LogPane to widgets module"
+
+
+FÁZE 3: PromptsTab migrace
+[✓] Přidat import PathResolver do main.py
+[✓] Nahradit PromptsTab.osnova_root() -> PathResolver delegate
+[✓] Nahradit PromptsTab.prompts_root() -> PathResolver delegate
+[ ] Otestovat PromptsTab v GUI (vybrat topic, language, run)
+[ ] COMMIT: "refactor(PromptsTab): use PathResolver"
+
+
+FÁZE 4: NarrationTab migrace
+[ ] Přidat import fs_helpers do main.py
+[ ] Nahradit _normalize_name calls -> fs_helpers.normalize_name
+[ ] Nahradit _resolve_topic_dir calls -> fs_helpers.resolve_topic_dir
+[ ] Nahradit _find_index_topic -> fs_helpers.find_topic_in_index
+[ ] Odstranit duplicitní metody z NarrationTab
+[ ] Otestovat NarrationTab (select episode, send to Claude)
+[ ] COMMIT: "refactor(NarrationTab): use PathResolver and fs_helpers"
+
+FÁZE 5: PostProcessTab migrace
+[ ] Stejný postup jako NarrationTab
+[ ] COMMIT: "refactor(PostProcessTab): use PathResolver and fs_helpers"
+
+FÁZE 6: OutlineTab cleanup (optional)
+[ ] Použít PathResolver pro temp config paths
+[ ] COMMIT: "refactor(OutlineTab): use PathResolver for temp paths"

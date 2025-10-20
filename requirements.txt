@@ -1,0 +1,10 @@
+anthropic
+httpx
+python-dotenv
+pyyaml
+aiofiles
+cryptography
+keyring
+filelock
+psutil
+structlog

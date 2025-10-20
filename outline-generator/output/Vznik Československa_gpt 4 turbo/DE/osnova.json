@@ -1,0 +1,390 @@
+{
+  "language": "DE",
+  "topic": "Vznik Československa",
+  "series_title": "Die Entstehung der Tschechoslowakei: Chronik eines neuen Staates",
+  "series_context": [
+    "Diese Serie untersucht die politischen, sozialen und internationalen Entwicklungen, die zur Gründung der Tschechoslowakei führten.",
+    "Sie beleuchtet die wichtigsten Ereignisse von den Anfängen des 20. Jahrhunderts bis zur Staatsgründung 1918.",
+    "Der Fokus liegt auf überprüfbaren Fakten und der Darstellung des wissenschaftlichen Konsenses."
+  ],
+  "episodes": [
+    {
+      "index": 1,
+      "title": "Nationalbewusstsein und Habsburger Monarchie vor 1914",
+      "description": [
+        "Diese Episode analysiert die Entwicklung des tschechischen und slowakischen Nationalbewusstseins im Kontext der österreichisch-ungarischen Monarchie.",
+        "Sie behandelt politische Bewegungen, kulturelle Identität und die Rolle von Eliten.",
+        "Zentrale Begriffe wie 'Nation' werden gemäß aktueller Forschung definiert."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:15",
+          "text": "Der Begriff 'Nation' wird als politisch definierte Gemeinschaft nach Hroch, 2019 verwendet.",
+          "sources_segment": [
+            "Hroch, Das Europa der Nationen (2019)"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "Die tschechische Nationalbewegung erstarkte ab den 1860er Jahren in Böhmen (heute Tschechien).",
+          "sources_segment": [
+            "Agnew, The Czechs and the Lands of the Bohemian Crown (2004)"
+          ]
+        },
+        {
+          "timestamp": "22:00",
+          "text": "Slowakische Eliten forderten Autonomie im Königreich Ungarn (heute Slowakei) ab ca. 1867.",
+          "sources_segment": [
+            "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+          ]
+        },
+        {
+          "timestamp": "35:40",
+          "text": "Die Habsburger Monarchie blieb bis 1914 ein Vielvölkerstaat mit begrenzter Nationalvertretung.",
+          "sources_segment": [
+            "Hroch, Das Europa der Nationen (2019)"
+          ]
+        },
+        {
+          "timestamp": "50:00",
+          "text": "Die Volkszählung 1910 erfasste in Böhmen 6,7 Mio. Tschechen und 2,1 Mio. Deutsche.",
+          "sources_segment": [
+            "Agnew, The Czechs and the Lands of the Bohemian Crown (2004)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "08:15",
+          "11:30",
+          "13:40",
+          "14:20",
+          "10:55"
+        ],
+        "sum_minutes": 59
+      },
+      "viewer_takeaway": "Das nationale Bewusstsein entwickelte sich im Spannungsfeld von Monarchie und ethnischer Identität.",
+      "sources_used": [
+        "Hroch, Das Europa der Nationen (2019)",
+        "Agnew, The Czechs and the Lands of the Bohemian Crown (2004)",
+        "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+      ],
+      "confidence_note": "Primärquellen zur Volkszählung 1910 liegen vor; Forschung zu Nationalbewusstsein ist weitgehend konsensual."
+    },
+    {
+      "index": 2,
+      "title": "Der Erste Weltkrieg und die tschechoslowakische Exilbewegung",
+      "description": [
+        "Diese Episode beleuchtet die Auswirkungen des Ersten Weltkriegs auf die tschechischen und slowakischen Gebiete.",
+        "Sie thematisiert die Aktivitäten der Exilbewegung und die internationale Diplomatie.",
+        "Die Rolle von Tomáš G. Masaryk und Edvard Beneš wird anhand von Primärquellen dargestellt."
+      ],
+      "msp": [
+        {
+          "timestamp": "03:00",
+          "text": "Mit Kriegsbeginn 1914 (Gregorianisch) verschärften sich Repressionen gegen nationale Bewegungen.",
+          "sources_segment": [
+            "Wingfield, Flag Wars and Stone Saints (2007)"
+          ]
+        },
+        {
+          "timestamp": "13:20",
+          "text": "Masaryk gründete 1915 in Genf das Tschechische Nationalkomitee im Exil.",
+          "sources_segment": [
+            "Zacek, The Czech and Slovak Legion in Siberia (2019)"
+          ]
+        },
+        {
+          "timestamp": "22:10",
+          "text": "Die Tschechoslowakische Legion kämpfte ab 1916 auf Seiten der Entente in Russland.",
+          "sources_segment": [
+            "Zacek, The Czech and Slovak Legion in Siberia (2019)"
+          ]
+        },
+        {
+          "timestamp": "35:00",
+          "text": "Beneš führte diplomatische Verhandlungen mit Frankreich und Großbritannien ab 1916.",
+          "sources_segment": [
+            "Wingfield, Flag Wars and Stone Saints (2007)"
+          ]
+        },
+        {
+          "timestamp": "50:30",
+          "text": "Die Exilbewegung veröffentlichte 1917 das 'Cleveland Agreement' zur Einheit von Tschechen und Slowaken.",
+          "sources_segment": [
+            "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:20",
+          "08:50",
+          "12:50",
+          "15:30",
+          "11:30"
+        ],
+        "sum_minutes": 59
+      },
+      "viewer_takeaway": "Der Erste Weltkrieg förderte die internationale Organisation der tschechoslowakischen Unabhängigkeitsbewegung.",
+      "sources_used": [
+        "Wingfield, Flag Wars and Stone Saints (2007)",
+        "Zacek, The Czech and Slovak Legion in Siberia (2019)",
+        "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+      ],
+      "confidence_note": "Primärquellen zu Exilorganisationen und Legion sind erhalten; Forschung ist weitgehend übereinstimmend."
+    },
+    {
+      "index": 3,
+      "title": "Die Pariser Friedenskonferenz und internationale Anerkennung",
+      "description": [
+        "Diese Episode analysiert die diplomatischen Prozesse auf der Pariser Friedenskonferenz 1919.",
+        "Sie beschreibt die Anerkennung der Tschechoslowakei durch die Alliierten.",
+        "Die Episode erläutert die territoriale Festlegung und Minderheitenfragen."
+      ],
+      "msp": [
+        {
+          "timestamp": "04:10",
+          "text": "Die Pariser Friedenskonferenz begann am 1919-01-18 (Gregorianisch) mit Masaryk als Delegationsleiter.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary (2000)"
+          ]
+        },
+        {
+          "timestamp": "13:30",
+          "text": "Die Alliierten erkannten die Tschechoslowakei am 1918-10-28 de facto an.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (2009)"
+          ]
+        },
+        {
+          "timestamp": "22:45",
+          "text": "Der Vertrag von Saint-Germain (1919-09-10) legte die Grenzen der Tschechoslowakei fest.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary (2000)"
+          ]
+        },
+        {
+          "timestamp": "35:20",
+          "text": "Minderheitenrechte wurden im Vertrag von Saint-Germain für Deutsche und Ungarn garantiert.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (2009)"
+          ]
+        },
+        {
+          "timestamp": "50:00",
+          "text": "Die Slowakei wurde als Teil des neuen Staates völkerrechtlich bestätigt.",
+          "sources_segment": [
+            "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "09:20",
+          "09:15",
+          "12:35",
+          "14:40",
+          "13:10"
+        ],
+        "sum_minutes": 59
+      },
+      "viewer_takeaway": "Die internationale Anerkennung der Tschechoslowakei erfolgte durch Verträge und diplomatische Verhandlungen.",
+      "sources_used": [
+        "Cornwall, The Undermining of Austria-Hungary (2000)",
+        "Orzoff, Battle for the Castle (2009)",
+        "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+      ],
+      "confidence_note": "Primärdokumente der Pariser Konferenz sind erhalten; Minderheitenfragen werden in der Forschung unterschiedlich gewichtet."
+    },
+    {
+      "index": 4,
+      "title": "Verfassung und Staatsaufbau der Ersten Tschechoslowakischen Republik",
+      "description": [
+        "Diese Episode behandelt die Ausarbeitung der Verfassung und den institutionellen Aufbau des neuen Staates.",
+        "Sie analysiert die Rolle von Parlament, Präsident und Minderheitenvertretung.",
+        "Die Episode erläutert die rechtlichen Grundlagen und die Umsetzung der Demokratie."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:30",
+          "text": "Die provisorische Verfassung wurde am 1918-11-13 (Gregorianisch) verabschiedet.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (2009)"
+          ]
+        },
+        {
+          "timestamp": "12:10",
+          "text": "Die endgültige Verfassung trat am 1920-02-29 (Gregorianisch) in Kraft.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary (2000)"
+          ]
+        },
+        {
+          "timestamp": "20:45",
+          "text": "Das Parlament bestand aus Abgeordnetenhaus und Senat mit Verhältniswahlrecht.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (2009)"
+          ]
+        },
+        {
+          "timestamp": "33:00",
+          "text": "Der Präsident wurde von der Nationalversammlung gewählt, erstmals Masaryk (1918).",
+          "sources_segment": [
+            "Wingfield, Flag Wars and Stone Saints (2007)"
+          ]
+        },
+        {
+          "timestamp": "48:00",
+          "text": "Minderheiten erhielten laut Verfassung kulturelle und sprachliche Rechte.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary (2000)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "09:40",
+          "08:35",
+          "12:15",
+          "15:00",
+          "13:30"
+        ],
+        "sum_minutes": 59
+      },
+      "viewer_takeaway": "Die Verfassung der Ersten Republik schuf demokratische Institutionen und Minderheitenschutz.",
+      "sources_used": [
+        "Orzoff, Battle for the Castle (2009)",
+        "Cornwall, The Undermining of Austria-Hungary (2000)",
+        "Wingfield, Flag Wars and Stone Saints (2007)"
+      ],
+      "confidence_note": "Verfassungstexte sind als Primärquellen erhalten; institutionelle Details sind gut dokumentiert."
+    },
+    {
+      "index": 5,
+      "title": "Wirtschaftliche und soziale Herausforderungen 1918–1923",
+      "description": [
+        "Diese Episode analysiert die wirtschaftlichen und sozialen Bedingungen in der Anfangszeit der Tschechoslowakei.",
+        "Sie behandelt Inflation, Landreform und die Integration verschiedener Regionen.",
+        "Die Episode erläutert die Auswirkungen auf die Bevölkerung und die staatliche Politik."
+      ],
+      "msp": [
+        {
+          "timestamp": "03:10",
+          "text": "Die Inflation stieg 1919–1922 um das Fünffache (Statistikamt, 1923).",
+          "sources_segment": [
+            "Teich, Bohemia in History (1998)"
+          ]
+        },
+        {
+          "timestamp": "13:00",
+          "text": "Die Landreform von 1919 enteignete ca. 2,8 Mio. Hektar Großgrundbesitz.",
+          "sources_segment": [
+            "Teich, Bohemia in History (1998)"
+          ]
+        },
+        {
+          "timestamp": "22:20",
+          "text": "Die Industrieproduktion erreichte 1923 wieder das Vorkriegsniveau (Statistikamt, 1924).",
+          "sources_segment": [
+            "Teich, Bohemia in History (1998)"
+          ]
+        },
+        {
+          "timestamp": "35:10",
+          "text": "Soziale Spannungen führten 1920 zu Streiks mit ca. 200.000 Teilnehmern.",
+          "sources_segment": [
+            "Wingfield, Flag Wars and Stone Saints (2007)"
+          ]
+        },
+        {
+          "timestamp": "50:00",
+          "text": "Die Integration der Slowakei erforderte Anpassungen im Bildungssystem ab 1921.",
+          "sources_segment": [
+            "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "09:50",
+          "09:20",
+          "12:50",
+          "13:50",
+          "13:10"
+        ],
+        "sum_minutes": 59
+      },
+      "viewer_takeaway": "Die junge Republik stand vor erheblichen wirtschaftlichen und sozialen Herausforderungen.",
+      "sources_used": [
+        "Teich, Bohemia in History (1998)",
+        "Wingfield, Flag Wars and Stone Saints (2007)",
+        "Kučera, Die Slowaken im 19. Jahrhundert (2015)"
+      ],
+      "confidence_note": "Statistische Primärquellen und Archivmaterial liegen vor; Forschung zu sozialen Konflikten ist konsensual."
+    },
+    {
+      "index": 6,
+      "title": "Erbe und internationale Bedeutung der Staatsgründung",
+      "description": [
+        "Diese Episode bewertet das Erbe der Tschechoslowakei und ihre Rolle im internationalen Kontext.",
+        "Sie behandelt die Nachwirkungen der Staatsgründung auf Mitteleuropa.",
+        "Die Episode erläutert die Bedeutung für Minderheiten und die Entwicklung nationaler Identitäten."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:40",
+          "text": "Die Tschechoslowakei wurde als Modell für Nationalstaatsbildung in Ostmitteleuropa betrachtet.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (2009)"
+          ]
+        },
+        {
+          "timestamp": "12:00",
+          "text": "Minderheitenpolitik blieb ein zentrales Thema bis zum Münchner Abkommen 1938.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary (2000)"
+          ]
+        },
+        {
+          "timestamp": "22:30",
+          "text": "Die Staatsgründung beeinflusste die Entwicklung nationaler Identitäten in der Region.",
+          "sources_segment": [
+            "Hroch, Das Europa der Nationen (2019)"
+          ]
+        },
+        {
+          "timestamp": "36:00",
+          "text": "Internationale Anerkennung förderte die Integration in den Völkerbund ab 1920.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (2009)"
+          ]
+        },
+        {
+          "timestamp": "52:00",
+          "text": "Das Erbe der Tschechoslowakei wirkt bis in die heutigen Staaten Tschechien und Slowakei fort.",
+          "sources_segment": [
+            "Hroch, Das Europa der Nationen (2019)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "09:20",
+          "10:30",
+          "13:30",
+          "16:00",
+          "12:40"
+        ],
+        "sum_minutes": 62
+      },
+      "viewer_takeaway": "Das Erbe der Tschechoslowakei prägt Mitteleuropa und die nationale Identität bis heute.",
+      "sources_used": [
+        "Orzoff, Battle for the Castle (2009)",
+        "Cornwall, The Undermining of Austria-Hungary (2000)",
+        "Hroch, Das Europa der Nationen (2019)"
+      ],
+      "confidence_note": "Forschung zum Erbe ist breit dokumentiert; Interpretationen zur Minderheitenpolitik variieren in der Gewichtung."
+    }
+  ]
+}

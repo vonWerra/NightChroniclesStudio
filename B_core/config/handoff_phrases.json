@@ -1,0 +1,62 @@
+{
+  "cs": {
+    "opening": [
+      "V návaznosti na předchozí vývoj je zřejmé, že",
+      "Na tuto situaci plynule navázalo, že",
+      "Po těchto událostech se napětí dále prohlubovalo, když"
+    ],
+    "closing": [
+      "Tyto okolnosti přirozeně otevřely cestu k tématu, jemuž se budeme věnovat v následující části.",
+      "Tím se vytvořil rámec pro další krok, který rozvedeme v dalším segmentu.",
+      "Z toho organicky vyústilo, k čemu se dostaneme hned vzápětí."
+    ]
+  },
+  "en": {
+    "opening": [
+      "Building directly on this,",
+      "In the wake of these events,",
+      "From here, tensions continued to rise as"
+    ],
+    "closing": [
+      "These developments naturally set the stage for what comes next.",
+      "This created the conditions for the next step, which we examine in the following segment.",
+      "From this, it follows that the next chapter unfolds just ahead."
+    ]
+  },
+  "de": {
+    "opening": [
+      "Im Anschluss an diese Ereignisse",
+      "Unmittelbar darauf folgte",
+      "Vor diesem Hintergrund setzte sich fort, dass"
+    ],
+    "closing": [
+      "Damit war der Boden bereitet für das, was als Nächstes folgt.",
+      "Dies schuf die Voraussetzungen für den nächsten Schritt, den wir im folgenden Abschnitt beleuchten.",
+      "Daraus ergab sich der Übergang zum nächsten Thema."
+    ]
+  },
+  "fr": {
+    "opening": [
+      "Dans la continuité de ces événements,",
+      "À la suite de cela,",
+      "Sur cette lancée,"
+    ],
+    "closing": [
+      "Ces développements ont naturellement préparé le terrain pour la suite.",
+      "Cela a créé les conditions du pas suivant, que nous détaillerons au segment suivant.",
+      "De là découle la transition vers le prochain sujet."
+    ]
+  },
+  "es": {
+    "opening": [
+      "En continuidad con lo anterior,",
+      "A partir de estos hechos,",
+      "En este contexto,"
+    ],
+    "closing": [
+      "Estos acontecimientos prepararon de forma natural el terreno para lo que sigue.",
+      "Esto creó las condiciones para el siguiente paso, que abordaremos en el próximo segmento.",
+      "De ello se desprende la transición hacia el siguiente tema."
+    ]
+  }
+}

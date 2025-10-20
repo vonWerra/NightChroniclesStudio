@@ -1,0 +1,427 @@
+{
+  "language": "CS",
+  "topic": "Vznik Československa",
+  "series_title": "Vznik Československa: Cesta ke společnému státu",
+  "series_context": [
+    "Tato série chronologicky mapuje klíčové události, které vedly ke vzniku Československa v roce 1918.",
+    "Zaměřuje se na politické, sociální a mezinárodní faktory, které ovlivnily proces státního formování.",
+    "Důraz je kladen na ověřená fakta a konsenzus odborné historiografie."
+  ],
+  "episodes": [
+    {
+      "index": 1,
+      "title": "Rakousko-Uhersko a české země před válkou",
+      "description": [
+        "První epizoda představuje politické a společenské poměry v českých zemích před první světovou válkou.",
+        "Analyzuje postavení českého a slovenského obyvatelstva v rámci Rakouska-Uherska.",
+        "Zaměřuje se na národní hnutí a jejich požadavky.",
+        "Epizoda klade důraz na klíčové události a aktéry před rokem 1914."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:15",
+          "text": "V roce 1910 žilo v českých zemích 6,8 milionu obyvatel (census).",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Wingfield, Czech Nationalism in the Nineteenth Century (Seattle: University of Washington Press, 2007)"
+          ]
+        },
+        {
+          "timestamp": "08:30",
+          "text": "České země byly součástí Předlitavska v Rakousku-Uhersku (1867–1918).",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Agnew, The Czechs and the Lands of the Bohemian Crown (Stanford: Stanford University Press, 2004)"
+          ]
+        },
+        {
+          "timestamp": "16:45",
+          "text": "Slovensko bylo součástí Uherska, s omezenou autonomií a maďarizací školství.",
+          "sources_segment": [
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)",
+            "Agnew, The Czechs and the Lands of the Bohemian Crown (Stanford: Stanford University Press, 2004)"
+          ]
+        },
+        {
+          "timestamp": "28:10",
+          "text": "České politické strany požadovaly větší autonomii v rámci monarchie (od 1860).",
+          "sources_segment": [
+            "Wingfield, Czech Nationalism in the Nineteenth Century (Seattle: University of Washington Press, 2007)",
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)"
+          ]
+        },
+        {
+          "timestamp": "41:00",
+          "text": "Slovenské národní hnutí usilovalo o kulturní a jazyková práva (memorandum 1861).",
+          "sources_segment": [
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)",
+            "Wingfield, Czech Nationalism in the Nineteenth Century (Seattle: University of Washington Press, 2007)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "06:15",
+          "08:15",
+          "11:25",
+          "12:50",
+          "16:15"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Před první světovou válkou byla česká a slovenská otázka zásadní pro budoucí státotvorné procesy.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+        "Wingfield, Czech Nationalism in the Nineteenth Century (Seattle: University of Washington Press, 2007)",
+        "Agnew, The Czechs and the Lands of the Bohemian Crown (Stanford: Stanford University Press, 2004)",
+        "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+      ],
+      "confidence_note": "Všechny klíčové údaje jsou doloženy s využitím sčítání lidu a odborné literatury."
+    },
+    {
+      "index": 2,
+      "title": "První světová válka a československý odboj",
+      "description": [
+        "Druhá epizoda sleduje dopady první světové války na české a slovenské obyvatelstvo.",
+        "Představuje vznik zahraničního a domácího odboje.",
+        "Zaměřuje se na formování československých legií a jejich význam.",
+        "Epizoda analyzuje postavení českých a slovenských politiků v exilu."
+      ],
+      "msp": [
+        {
+          "timestamp": "03:10",
+          "text": "V letech 1914–1918 bylo mobilizováno přes 1,4 milionu mužů z českých zemí.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "09:50",
+          "text": "Domácí odboj tvořila Maffie, založená v roce 1914 v Praze.",
+          "sources_segment": [
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)",
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)"
+          ]
+        },
+        {
+          "timestamp": "18:20",
+          "text": "Československé legie vznikly v Rusku, Francii a Itálii (1914–1918).",
+          "sources_segment": [
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)",
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)"
+          ]
+        },
+        {
+          "timestamp": "29:00",
+          "text": "V exilu působil Masaryk, Beneš a Štefánik jako hlavní představitelé odboje.",
+          "sources_segment": [
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "41:10",
+          "text": "Legionářské jednotky čítaly v roce 1918 přes 100 000 mužů (Rusko, Francie, Itálie).",
+          "sources_segment": [
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)",
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "06:40",
+          "08:30",
+          "10:40",
+          "12:10",
+          "16:00"
+        ],
+        "sum_minutes": 54
+      },
+      "viewer_takeaway": "Československý odboj a legie sehrály klíčovou roli v mezinárodním uznání budoucího státu.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+        "Kárník, České země v éře První republiky (Praha: Libri, 2003)",
+        "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)"
+      ],
+      "confidence_note": "Všechny údaje jsou podloženy odbornými monografiemi a archivními záznamy."
+    },
+    {
+      "index": 3,
+      "title": "Mezinárodní uznání a cesta k samostatnosti",
+      "description": [
+        "Třetí epizoda se věnuje diplomatickému úsilí československého odboje v zahraničí.",
+        "Představuje klíčové dokumenty jako Clevelandskou a Pittsburskou dohodu.",
+        "Analyzuje role velmocí v procesu uznání Československa.",
+        "Epizoda sleduje vývoj od roku 1915 do léta 1918."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:30",
+          "text": "Clevelandská dohoda byla podepsána 22. 10. 1915 mezi Čechy a Slováky v USA.",
+          "sources_segment": [
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)",
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)"
+          ]
+        },
+        {
+          "timestamp": "09:10",
+          "text": "Pittsburská dohoda z 31. 5. 1918 deklarovala společný stát s autonomií Slovenska.",
+          "sources_segment": [
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)",
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+          ]
+        },
+        {
+          "timestamp": "18:00",
+          "text": "Dohoda velmocí v červnu 1918 uznala Národní radu československou jako reprezentaci.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)"
+          ]
+        },
+        {
+          "timestamp": "28:45",
+          "text": "Masaryk byl v červenci 1918 uznán hlavou prozatímní vlády v Paříži.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)"
+          ]
+        },
+        {
+          "timestamp": "41:20",
+          "text": "V létě 1918 došlo k mezinárodnímu uznání československých legií jako spojenecké armády.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "06:40",
+          "08:50",
+          "10:45",
+          "12:35",
+          "15:10"
+        ],
+        "sum_minutes": 54
+      },
+      "viewer_takeaway": "Mezinárodní uznání československého odboje bylo zásadní pro vznik samostatného státu.",
+      "sources_used": [
+        "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)",
+        "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+        "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+      ],
+      "confidence_note": "Všechny klíčové události jsou doloženy archivními dokumenty a odbornou literaturou."
+    },
+    {
+      "index": 4,
+      "title": "Rozpad monarchie a vyhlášení Československa",
+      "description": [
+        "Čtvrtá epizoda sleduje události podzimu 1918 vedoucí k rozpadu Rakouska-Uherska.",
+        "Představuje vznik Národního výboru a jeho kroky k převzetí moci.",
+        "Analyzuje samotné vyhlášení republiky 28. října 1918.",
+        "Epizoda zdůrazňuje význam právní kontinuity a převzetí státní správy."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:55",
+          "text": "Národní výbor československý vznikl 13. 7. 1918 v Praze.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "09:00",
+          "text": "28. 10. 1918 byl v Praze vyhlášen samostatný československý stát (Gregoriánský kalendář).",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "17:20",
+          "text": "Národní výbor převzal správu úřadů a armády v českých zemích.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "28:30",
+          "text": "Slovenská národní rada vyhlásila připojení Slovenska k Československu 30. 10. 1918.",
+          "sources_segment": [
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)",
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)"
+          ]
+        },
+        {
+          "timestamp": "41:00",
+          "text": "Vyhlášení republiky proběhlo v souladu s právními principy státní kontinuity.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "07:05",
+          "08:20",
+          "11:10",
+          "12:30",
+          "15:55"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Vyhlášení Československa 28. října 1918 znamenalo zásadní zlom ve středoevropských dějinách.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+        "Kárník, České země v éře První republiky (Praha: Libri, 2003)",
+        "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+      ],
+      "confidence_note": "Všechny události jsou doloženy archivními dokumenty a odbornými publikacemi."
+    },
+    {
+      "index": 5,
+      "title": "První dny republiky a konsolidace moci",
+      "description": [
+        "Pátá epizoda se zaměřuje na první týdny existence Československa.",
+        "Popisuje převzetí státní správy, armády a ekonomických struktur.",
+        "Analyzuje reakce menšin a okolních států.",
+        "Epizoda sleduje proces konsolidace nové republiky do konce roku 1918."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:10",
+          "text": "Národní výbor vydal 28. 10. 1918 první zákon o vzniku státu (tzv. recepční norma).",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "09:30",
+          "text": "Do konce října 1918 převzala republika kontrolu nad většinou úřadů a železnic.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "17:00",
+          "text": "Německé a maďarské menšiny vyhlásily vlastní provincie, jejichž uznání nebylo mezinárodně přijato.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)"
+          ]
+        },
+        {
+          "timestamp": "28:20",
+          "text": "Do prosince 1918 byla vytvořena prozatímní vláda v čele s Masarykem.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        },
+        {
+          "timestamp": "41:10",
+          "text": "Republika čelila ozbrojeným střetům na hranicích s Polskem a Maďarskem (listopad–prosinec 1918).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Kárník, České země v éře První republiky (Praha: Libri, 2003)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "07:20",
+          "07:30",
+          "11:20",
+          "12:50",
+          "15:40"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Konsolidace Československa probíhala v obtížných podmínkách vnitřních i vnějších konfliktů.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky (Praha: NLN, 2018)",
+        "Kárník, České země v éře První republiky (Praha: Libri, 2003)",
+        "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)"
+      ],
+      "confidence_note": "Všechny informace jsou doloženy odbornou literaturou a dobovými dokumenty."
+    },
+    {
+      "index": 6,
+      "title": "Mezinárodní uznání a Pařížská mírová konference",
+      "description": [
+        "Závěrečná epizoda sleduje proces mezinárodního uznání Československa v letech 1918–1919.",
+        "Představuje jednání na Pařížské mírové konferenci a stanovení hranic.",
+        "Analyzuje diplomatická jednání s okolními státy.",
+        "Epizoda uzavírá proces vzniku Československa v evropském kontextu."
+      ],
+      "msp": [
+        {
+          "timestamp": "03:00",
+          "text": "V lednu 1919 začala Pařížská mírová konference s účastí československé delegace.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)"
+          ]
+        },
+        {
+          "timestamp": "09:40",
+          "text": "Dohoda o hranicích byla uzavřena s Rakouskem a Německem v roce 1919.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+          ]
+        },
+        {
+          "timestamp": "18:10",
+          "text": "Slovensko bylo mezinárodně uznáno jako součást Československa v červnu 1919.",
+          "sources_segment": [
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)",
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)"
+          ]
+        },
+        {
+          "timestamp": "29:00",
+          "text": "Československo bylo uznáno všemi velmocemi do konce roku 1919.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)"
+          ]
+        },
+        {
+          "timestamp": "41:30",
+          "text": "Definitivní hranice byly stanoveny Saint-Germainskou a Trianonskou smlouvou (1919–1920).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+            "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "06:40",
+          "08:30",
+          "10:50",
+          "12:30",
+          "15:20"
+        ],
+        "sum_minutes": 54
+      },
+      "viewer_takeaway": "Mezinárodní uznání a mírové smlouvy završily vznik Československa jako suverénního státu.",
+      "sources_used": [
+        "Orzoff, Battle for the Castle (Oxford: Oxford University Press, 2009)",
+        "Nálevka, Československá zahraniční akce 1914–1918 (Praha: Karolinum, 2003)",
+        "Kováč, Dějiny Slovenska (Praha: Lidové noviny, 2011)"
+      ],
+      "confidence_note": "Všechny klíčové údaje jsou doloženy archivními dokumenty a odbornými publikacemi."
+    }
+  ]
+}

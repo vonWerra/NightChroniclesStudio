@@ -1,0 +1,16 @@
+- Cíl: sjednotit a vyčistit existující moduly (bez změny formátů výstupů), centralizovat výstupy a připravit jednoduché GUI (PySide6) jako orchestrátor subprocessů.
+- Moduly: outline-generator (osnovy), B_core (prompts), claude_generator (narace), narration_builder (fúze/ práce s texty), historical_processor (post-process + TTS), elevenlabs_vystup (TTS výstupy).
+- Centralizované výstupy: vše do kořenové složky outputs/, s podstromy:
+  - outputs/outline/, outputs/prompts/, outputs/narration/, outputs/postprocess/, outputs/tts/, outputs/export/
+- Env proměnné (priorita): NC_OUTPUTS_ROOT (root), OUTLINE_OUTPUT_ROOT, PROMPTS_OUTPUT_ROOT, NARRATION_OUTPUT_ROOT, POSTPROC_OUTPUT_ROOT, TTS_OUTPUT_ROOT; fallback na původní cesty.
+- outline-generator: default model GPT-4.1-mini; podpora -o a/nebo OUTLINE_OUTPUT_ROOT/NC_OUTPUTS_ROOT; přidány exit codes, progress callback, HTTP timeout, bezpečnější JSON cache, moderní type hints, zjednodušený logging, opravené UTF-8 čtení.
+- B_core (prompts): čte osnova z outputs/outline; zapisuje prompty do outputs/prompts; žádná změna formátu souborů, pouze root cesta.
+- claude_generator: vstup z outputs/prompts; výstup (segmenty, fusion) do outputs/narration; přidána podpora NARRATION_OUTPUT_ROOT/NC_OUTPUTS_ROOT.
+- narration_builder: respektuje NC_OUTPUTS_ROOT (outlines → outline, epizody/TTS texty → tts, výstup → narration); lze přebít ROOT_OUTLINES_DIR/ROOT_EPISODES_DIR/OUTPUT_DIR.
+- historical_processor: čte narace z outputs/narration; zapisuje textové postprocess výstupy do outputs/postprocess a MP3 do outputs/tts (tts_base); backup/logy pod tts/.
+- ElevenLabs TTS: používá SDK v2; voice_settings zahrnují speed; výstupy se ukládají pod outputs/tts/{topic}/{lang}/ep_{xxx}.
+- Testy: “naostro” vygenerován CS outline do outputs/outline; gpt-4.1-mini ověřen; cena ~ řádu 0.2–0.5 centu za jazyk; doba ~2–4 min (občas retry při timeoutu).
+- Šablony/dokumentace: README/CHANGES/QUICK_START čisté; odstraněny dočasné soubory; .env.example očištěn (placeholder klíče, GPT-4.1-mini).
+- Bezpečnost/úklid: smazány venv/__pycache__; doporučen .gitignore (venv, __pycache__, logs/, outputs/, .env); nikdy necommitovat .env ani klíče.
+- Invarianty: formáty a názvy výstupů se NEMĚNÍ, pouze kořenová cesta; moduly zůstávají samostatné a spouštěné jako subprocess.
+- Další kroky: sjednotit historical_processor export do outputs/export (pokud bude), upravit elevenlabs_vystup na centrální root (hotovo přes hist. processor), připravit GUI skeleton (tabs + subprocess + live log).

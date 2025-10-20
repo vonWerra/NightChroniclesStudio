@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Parameters Schema",
+  "type": "object",
+  "required": ["lang", "numbers_style", "wpm", "word_tolerance_percent"],
+  "properties": {
+    "lang": {
+      "type": "string",
+      "enum": ["cs", "en", "de", "fr", "es"]
+    },
+    "numbers_style": {
+      "type": "string",
+      "enum": ["all_words", "digits_for_years"]
+    },
+    "wpm": { "type": "integer", "minimum": 80, "maximum": 220 },
+    "word_tolerance_percent": { "type": "integer", "minimum": 1, "maximum": 10 },
+    "tts_pause_seconds_between_segments": { "type": "number", "minimum": 0 },
+    "merge_text_after_segments": { "type": "boolean" },
+    "use_canon": { "type": "boolean" }
+  }
+}

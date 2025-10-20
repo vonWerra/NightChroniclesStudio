@@ -1,0 +1,413 @@
+{
+  "language": "ES",
+  "topic": "Vznik Československa",
+  "series_title": "El Surgimiento de Checoslovaquia: Historia de una Nación",
+  "series_context": [
+    "Esta serie examina el proceso histórico que condujo a la creación de Checoslovaquia en 1918.",
+    "Se abordan los antecedentes políticos, sociales y diplomáticos en el contexto de Europa Central y la Primera Guerra Mundial."
+  ],
+  "episodes": [
+    {
+      "index": 1,
+      "title": "Antecedentes: Bohemia, Eslovaquia y el Imperio Austrohúngaro",
+      "description": [
+        "Se exploran las raíces históricas de las tierras checas y eslovacas bajo el dominio de los Habsburgo.",
+        "El episodio analiza las estructuras políticas, sociales y culturales previas a 1914."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:15",
+          "text": "En 1867, el Compromiso Austrohúngaro reorganizó el Imperio en dos entidades autónomas.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "10:30",
+          "text": "El censo de 1910 registró 6,7 millones de checos y 2 millones de eslovacos en el imperio.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "20:05",
+          "text": "El movimiento nacional checo promovió la autonomía cultural desde la década de 1860.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "32:40",
+          "text": "El Memorándum Nacional Eslovaco de 1861 exigió derechos lingüísticos y administrativos.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "45:00",
+          "text": "Las tensiones étnicas aumentaron en Bohemia (Čechy, actual República Checa) antes de 1914.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Kučera, České země v éře První republiky"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "08:15",
+          "09:35",
+          "12:35",
+          "12:20",
+          "12:15"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "Las tierras checas y eslovacas tenían identidades nacionales diferenciadas bajo el Imperio Austrohúngaro.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Todos los hechos se basan en registros censales y monografías recientes; no existen disputas relevantes."
+    },
+    {
+      "index": 2,
+      "title": "La Primera Guerra Mundial y el Despertar Nacional",
+      "description": [
+        "Se analiza el impacto de la Primera Guerra Mundial en las sociedades checa y eslovaca.",
+        "El episodio destaca la movilización, la represión y el crecimiento del nacionalismo."
+      ],
+      "msp": [
+        {
+          "timestamp": "03:00",
+          "text": "En 1914, más de 1 millón de checos fueron movilizados al ejército austrohúngaro.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Kučera, České země v éře První republiky"
+          ]
+        },
+        {
+          "timestamp": "13:20",
+          "text": "El Comité Nacional Checo se formó en Praga en 1916 para coordinar actividades nacionalistas.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        },
+        {
+          "timestamp": "22:45",
+          "text": "Miles de desertores checos y eslovacos se unieron a las Legiones en Rusia y Francia.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "34:10",
+          "text": "La represión imperial incluyó censura y arrestos de líderes nacionalistas entre 1915 y 1917.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "46:30",
+          "text": "El sufrimiento civil por escasez de alimentos intensificó el apoyo a la independencia.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:20",
+          "09:25",
+          "11:25",
+          "12:20",
+          "11:30"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "La guerra aceleró el nacionalismo checo y eslovaco y debilitó la autoridad imperial.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Los datos provienen de archivos militares y estudios recientes; no existen disputas sustanciales."
+    },
+    {
+      "index": 3,
+      "title": "Diplomacia y Reconocimiento Internacional",
+      "description": [
+        "Se examinan los esfuerzos diplomáticos de Tomáš G. Masaryk y Edvard Beneš en el extranjero.",
+        "El episodio cubre el reconocimiento internacional de la causa checoslovaca."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:10",
+          "text": "En 1915, Masaryk inició campañas diplomáticas en Londres y París para la independencia.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "12:30",
+          "text": "El Consejo Nacional Checoslovaco se fundó en París en 1916 como órgano representativo.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        },
+        {
+          "timestamp": "22:50",
+          "text": "En mayo de 1918, Francia reconoció oficialmente al Consejo Nacional Checoslovaco.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "34:15",
+          "text": "Las Legiones Checoslovacas ganaron prestigio militar en la batalla de Zborov (1917-07-02, gregoriano).",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "47:00",
+          "text": "Estados Unidos reconoció la independencia checoslovaca el 3 de septiembre de 1918.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:20",
+          "10:20",
+          "11:25",
+          "12:45",
+          "10:10"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "La diplomacia internacional fue clave para legitimar la causa checoslovaca ante las potencias aliadas.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Los hechos se basan en documentos diplomáticos y estudios académicos; no se registran disputas."
+    },
+    {
+      "index": 4,
+      "title": "El Colapso Imperial y la Proclamación de Checoslovaquia",
+      "description": [
+        "Se narra la desintegración del Imperio Austrohúngaro y la proclamación del nuevo Estado.",
+        "El episodio detalla los acontecimientos de octubre de 1918 en Praga y Bratislava."
+      ],
+      "msp": [
+        {
+          "timestamp": "01:45",
+          "text": "El 28 de octubre de 1918 (gregoriano), se proclamó la independencia en Praga.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "11:10",
+          "text": "El Comité Nacional Checo asumió el control administrativo de Bohemia y Moravia.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "22:30",
+          "text": "El 30 de octubre, el Consejo Nacional Eslovaco declaró la unión con los checos en Martin (Eslovaquia).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        },
+        {
+          "timestamp": "33:50",
+          "text": "El Imperio Austrohúngaro firmó el armisticio el 3 de noviembre de 1918.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "45:30",
+          "text": "La proclamación fue recibida con celebraciones públicas en Praga y Bratislava (Eslovaquia).",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "09:25",
+          "11:20",
+          "11:20",
+          "11:40",
+          "11:15"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "La independencia checoslovaca fue proclamada tras la desintegración del poder imperial en 1918.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Todos los hechos están respaldados por documentos oficiales y estudios recientes; consenso historiográfico."
+    },
+    {
+      "index": 5,
+      "title": "Construcción del Estado y Desafíos Iniciales",
+      "description": [
+        "Se exploran los primeros pasos del nuevo Estado checoslovaco y los retos políticos y sociales.",
+        "El episodio aborda la integración de minorías y la consolidación institucional."
+      ],
+      "msp": [
+        {
+          "timestamp": "02:30",
+          "text": "En noviembre de 1918, Tomáš G. Masaryk fue nombrado primer presidente de Checoslovaquia.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        },
+        {
+          "timestamp": "13:00",
+          "text": "La Constitución Provisional fue adoptada el 13 de noviembre de 1918.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "23:45",
+          "text": "El nuevo Estado incluía a 3 millones de germanoparlantes y 700.000 húngaros (censo 1921).",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Kučera, České země v éře První republiky"
+          ]
+        },
+        {
+          "timestamp": "35:10",
+          "text": "Se establecieron consejos nacionales para gestionar minorías y regiones autónomas.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "47:00",
+          "text": "Hubo tensiones fronterizas con Polonia y Hungría en 1919 por Teschen y Eslovaquia.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Orzoff, Battle for the Castle"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:30",
+          "10:45",
+          "11:25",
+          "11:25",
+          "10:55"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "El nuevo Estado enfrentó desafíos de integración y consolidación tras su proclamación.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "Los datos provienen de fuentes oficiales y estudios académicos; no existen disputas relevantes."
+    },
+    {
+      "index": 6,
+      "title": "Legado y Significado Histórico de la Fundación",
+      "description": [
+        "Se evalúa el impacto de la fundación de Checoslovaquia en Europa Central.",
+        "El episodio analiza el legado político y social hasta la década de 1930."
+      ],
+      "msp": [
+        {
+          "timestamp": "03:10",
+          "text": "La Constitución de 1920 estableció un sistema parlamentario y derechos civiles amplios.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "13:30",
+          "text": "Checoslovaquia fue reconocida internacionalmente por la Sociedad de Naciones en 1920.",
+          "sources_segment": [
+            "Orzoff, Battle for the Castle",
+            "Cornwall, The Undermining of Austria-Hungary"
+          ]
+        },
+        {
+          "timestamp": "23:45",
+          "text": "El Estado promovió la educación y la industrialización en la década de 1920.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "35:00",
+          "text": "Persistieron tensiones étnicas, especialmente entre checos, eslovacos y germanoparlantes.",
+          "sources_segment": [
+            "Cornwall, The Undermining of Austria-Hungary",
+            "Orzoff, Battle for the Castle"
+          ]
+        },
+        {
+          "timestamp": "46:20",
+          "text": "El legado checoslovaco influyó en los movimientos democráticos de Europa Central en el siglo XX.",
+          "sources_segment": [
+            "Kučera, České země v éře První republiky",
+            "Orzoff, Battle for the Castle"
+          ]
+        }
+      ],
+      "runtime": {
+        "segments": [
+          "10:20",
+          "10:15",
+          "11:15",
+          "11:20",
+          "12:00"
+        ],
+        "sum_minutes": 55
+      },
+      "viewer_takeaway": "La fundación de Checoslovaquia tuvo un impacto duradero en la política y sociedad centroeuropea.",
+      "sources_used": [
+        "Kučera, České země v éře První republiky",
+        "Cornwall, The Undermining of Austria-Hungary",
+        "Orzoff, Battle for the Castle"
+      ],
+      "confidence_note": "El análisis se basa en estudios académicos y documentos oficiales; consenso historiográfico."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+studio_gui/.tmp/
+.tmp/
+*.log
+
+# Backup files
+*.backup
+*.orig
+
+# Backup files
+*.backup*
+scripts/fix_*
+scripts/gui_smoke.py
+scripts/run_gui.py
+outputs/
+logs/
+# Secrets
+*.env
+*/.env
+.env
+historical_processor/config.yaml

@@ -1,0 +1,52 @@
+{
+  "series_title": "The American Revolution: Struggle for Independence (1775–1783)",
+  "episodes_total": 6,
+  "episode_number": 1,
+  "episode_title": "Seeds of Rebellion: Colonial Tensions and the Road to War",
+  "episode_description": "Political, economic, and social tensions between Great Britain and its American colonies leading up to 1775, culminating in the outbreak at Lexington and Concord.",
+  "viewer_takeaway": "The American Revolution was rooted in escalating colonial resistance to British imperial policies.",
+  "sources": [
+    "Middlekauff, Robert",
+    "Wood, Gordon S.",
+    "Countryman, Edward",
+    "Maier, Pauline"
+  ],
+  "confidence_note": "The causes and chronology of pre-war tensions are well-established, with minor debate on relative importance.",
+  "segments": [
+    {
+      "segment_index": 1,
+      "msp_label": "British imperial policies and colonial grievances after the French and Indian War",
+      "minutes_target": 12,
+      "word_target": 1566,
+      "sources_segment": ["Middlekauff, Robert", "Wood, Gordon S."]
+    },
+    {
+      "segment_index": 2,
+      "msp_label": "The Stamp Act, Townshend Acts, and colonial protest movements",
+      "minutes_target": 12,
+      "word_target": 1566,
+      "sources_segment": ["Maier, Pauline", "Countryman, Edward"]
+    },
+    {
+      "segment_index": 3,
+      "msp_label": "The Boston Massacre and Boston Tea Party as flashpoints",
+      "minutes_target": 12,
+      "word_target": 1566,
+      "sources_segment": ["Maier, Pauline", "Middlekauff, Robert"]
+    },
+    {
+      "segment_index": 4,
+      "msp_label": "The First Continental Congress and the push for unity",
+      "minutes_target": 12,
+      "word_target": 1566,
+      "sources_segment": ["Wood, Gordon S.", "Countryman, Edward"]
+    },
+    {
+      "segment_index": 5,
+      "msp_label": "Lexington and Concord: the first shots of the revolution",
+      "minutes_target": 13,
+      "word_target": 1697,
+      "sources_segment": ["Middlekauff, Robert", "Wood, Gordon S."]
+    }
+  ]
+}
