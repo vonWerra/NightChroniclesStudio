@@ -54,9 +54,7 @@ def _configure_logging(level: int = logging.INFO) -> None:
     structlog.configure(logger_factory=structlog.stdlib.LoggerFactory(), cache_logger_on_first_use=True)
     logging.getLogger().setLevel(level)
 
-
-
-def _start_qprocess(cmd: list[str], env: dict | None, parent: QObject, log_cb, finished_cb):
+def _start_qprocess(cmd: list[str], env: dict | None, parent: QObject, log_cb, finished_cb, cwd: str | None = None):
     """Helper to start a SubprocessController in a QThread and connect callbacks.
 
     finished_cb is expected to accept a single int exit_code (legacy callers).
@@ -64,11 +62,12 @@ def _start_qprocess(cmd: list[str], env: dict | None, parent: QObject, log_cb, f
     """
     thread = QThread(parent)
     worker = SubprocessController()
-    # move worker to the thread so QProcess lives in the thread context
+    # DŮLEŽITÉ: moveToThread PŘED nastavením signálů
     worker.moveToThread(thread)
 
-    # wire basic log line -> UI callback
-    worker.log_line.connect(log_cb)
+    # wire basic log line -> UI callback (use QueuedConnection to ensure thread safety)
+    worker.log_line.connect(log_cb, Qt.QueuedConnection)
+
     # parsed structured logs -> send as stdout JSON string to log_cb
     def _on_parsed(obj):
         try:
@@ -76,9 +75,10 @@ def _start_qprocess(cmd: list[str], env: dict | None, parent: QObject, log_cb, f
         except Exception:
             s = str(obj)
         log_cb("stdout", s)
-    worker.parsed_log.connect(_on_parsed)
+    worker.parsed_log.connect(_on_parsed, Qt.QueuedConnection)
+
     # errors from controller
-    worker.error.connect(lambda msg: log_cb("stderr", f"[qprocess_runner] {msg}"))
+    worker.error.connect(lambda msg: log_cb("stderr", f"[qprocess_runner] {msg}"), Qt.QueuedConnection)
 
     # finished emits (exit_code, exit_status) -> call legacy finished_cb(exit_code)
     def _wrapped_finished(exit_code: int, exit_status: int):
@@ -90,12 +90,14 @@ def _start_qprocess(cmd: list[str], env: dict | None, parent: QObject, log_cb, f
                 thread.quit()
             except Exception:
                 pass
-    worker.finished.connect(_wrapped_finished)
+    worker.finished.connect(_wrapped_finished, Qt.QueuedConnection)
 
     def _start():
         prog = cmd[0]
         args = cmd[1:]
-        worker.start(prog, args, env=env)
+        # forward cwd to worker.start so subprocess runs in desired working dir
+        worker.start(prog, args, env=env, cwd=cwd)
+
     thread.started.connect(_start)
     thread.start()
     return thread, worker
@@ -1169,6 +1171,7 @@ class NarrationTab(QWidget):
         v.addWidget(self.log)
 
         self.cmb_topic.currentTextChanged.connect(self.on_topic_changed)
+        self.cmb_lang.currentTextChanged.connect(lambda: self.populate_episodes())
         self.refresh_topics()
 
         # After loading topics, trigger language/episode population for first topic
@@ -1455,6 +1458,55 @@ class NarrationTab(QWidget):
         if not topic or not lang:
             return
 
+                # DEBUG: Log what we're searching for
+        try:
+            self.log.append('stdout', f'[DEBUG] populate_episodes: topic={topic}, lang={lang}')
+        except Exception:
+            pass
+
+        if not topic or not lang:
+            try:
+                self.log.append('stderr', f'[DEBUG] Missing topic or lang, aborting')
+            except Exception:
+                pass
+            return
+
+        base_topic_dir = self._resolve_topic_dir(self.narration_root(), topic)
+        base = os.path.join(base_topic_dir, lang)
+
+        # DEBUG: Log the path we're scanning
+        try:
+            self.log.append('stdout', f'[DEBUG] Scanning for episodes in: {base}')
+            self.log.append('stdout', f'[DEBUG] Path exists: {os.path.isdir(base)}')
+        except Exception:
+            pass
+
+        try:
+            eps = [d for d in os.listdir(base) if os.path.isdir(os.path.join(base, d)) and d.startswith('ep')]
+            # DEBUG: Log what we found
+            try:
+                self.log.append('stdout', f'[DEBUG] Found {len(eps)} episodes: {eps}')
+            except Exception:
+                pass
+        except Exception as e:
+            # DEBUG: Log the error
+            try:
+                self.log.append('stderr', f'[DEBUG] Error listing episodes: {e}')
+            except Exception:
+                pass
+            eps = []
+
+        eps.sort()
+        for ep in eps:
+            item = QListWidgetItem(ep)
+            self.lst_episodes.addItem(item)
+
+        # DEBUG: Log final count
+        try:
+            self.log.append('stdout', f'[DEBUG] Added {len(eps)} episodes to list')
+        except Exception:
+            pass
+
         # Prefer using precomputed indexes if available
         prompt_idx = getattr(self, '_prompt_index', None)
         narr_idx = getattr(self, '_narration_index', None)
@@ -1631,78 +1683,6 @@ class NarrationTab(QWidget):
                     self.lbl_pid.setText("")
         except Exception:
             self.lbl_pid.setText("")
-
-    def _on_episode_merged_finished(self, code: int) -> None:
-        """Callback po dokončení episode merge"""
-        self.log.append('stdout', '=' * 70)
-        self.log.append('stdout', f'Process finished with exit code {code}')
-        self.log.append('stdout', '=' * 70)
-
-        # Re-enable buttons
-        self.btn_run_episode_merged.setEnabled(True)
-        self.btn_run_episode.setEnabled(True)
-        self.btn_run_selected.setEnabled(True)
-
-        if code == 0:
-            # Success
-            topic = self.cmb_topic.currentText()
-            lang = self.cmb_lang.currentText()
-            items = self.lst_episodes.selectedItems()
-
-            if items:
-                ep = items[0].text()
-
-                # Find output file
-                merged_path = Path(self.postproc_root()) / topic / lang / ep / 'episode_merged.txt'
-
-                if merged_path.exists():
-                    size_kb = merged_path.stat().st_size / 1024
-                    self.log.append('stdout', '✓ Episode merged successfully!')
-                    self.log.append('stdout', f'  Output: {merged_path}')
-                    self.log.append('stdout', f'  Size: {size_kb:.1f} KB')
-
-                    # Check for manifest
-                    manifest_path = merged_path.parent / 'manifest.json'
-                    if manifest_path.exists():
-                        self.log.append('stdout', f'  Manifest: {manifest_path.name}')
-
-                    self.lbl_selected.setText(f"Done: {ep}")
-
-                    # Offer to open
-                    resp = QMessageBox.question(
-                        self,
-                        "Zpracování dokončeno",
-                        f"Epizoda {ep} byla úspěšně zpracována.\n\nOtevřít výstupní složku?",
-                        QMessageBox.Yes | QMessageBox.No
-                    )
-                    if resp == QMessageBox.Yes:
-                        self.open_output_folder()
-                else:
-                    self.log.append('stderr', f'✗ Output file not found: {merged_path}')
-                    self.lbl_selected.setText(f"Error: {ep}")
-            else:
-                self.log.append('stdout', '✓ Processing finished')
-                self.lbl_selected.setText("Done")
-        else:
-            self.log.append('stderr', f'✗ Episode processing failed (exit code {code})')
-            self.lbl_selected.setText("Failed")
-
-            # Show error dialog
-            QMessageBox.warning(
-                self,
-                "Chyba zpracování",
-                f"Zpracování epizody selhalo s exit code {code}.\n\nZkontroluj log pro detaily."
-            )
-
-        # Clear PID label
-        self.lbl_pid.setText("")
-
-        # Cleanup thread
-        if self.thread:
-            self.thread.quit()
-            self.thread.wait()
-            self.thread = None
-            self.worker = None
 
     def populate_prompts_for_episode(self, topic: str, lang: str, ep: str) -> None:
         """Fill self.lst_prompts with prompt files for given topic/lang/ep."""
@@ -2271,6 +2251,7 @@ class PostProcessTab(QWidget):
         self.cmb_lang.clear()
         if not topic:
             return
+
         # Prefer languages from prompts root (normalized topic mapping)
         langs: list[str] = []
         base_prompts = self._resolve_topic_dir(self.prompts_root(), topic)
@@ -2280,6 +2261,7 @@ class PostProcessTab(QWidget):
                     langs.append(name)
         except Exception:
             langs = []
+
         # Fallback to narration root if prompts not present
         if not langs:
             base = self._resolve_topic_dir(self.narration_root(), topic)
@@ -2289,6 +2271,7 @@ class PostProcessTab(QWidget):
                         langs.append(name)
             except Exception:
                 pass
+
         # Final fallback to outline root (detect languages by presence of osnova.json)
         if not langs:
             root_outline = self.osnova_root()
@@ -2298,6 +2281,7 @@ class PostProcessTab(QWidget):
                 p2 = os.path.join(topic_dir, code, "01_outline", "osnova.json")
                 if os.path.isfile(p1) or os.path.isfile(p2):
                     langs.append(code)
+
         langs = sorted(set(langs))
         self.cmb_lang.addItems(langs)
         if not langs:
@@ -2305,7 +2289,14 @@ class PostProcessTab(QWidget):
                 self.log.append('stderr', 'No languages found in prompts/narration/outline roots for the selected topic.')
             except Exception:
                 pass
-        self.populate_episodes()
+
+        # DEBUG: Na konci, když už jsou jazyky načtené!
+        try:
+            self.log.append('stdout', f'[DEBUG] on_topic_changed: calling populate_episodes()')
+        except Exception:
+            pass
+
+        self.populate_episodes()  # ← JEN TOHLE JEDNO volání na úplném konci!
 
     def populate_episodes(self) -> None:
         topic = self.cmb_topic.currentText().strip()
@@ -2521,9 +2512,19 @@ class PostProcessTab(QWidget):
         output_base = self.postproc_root()
         cmd.extend(['--output-dir', output_base])
 
-        # 7. Environment
+        # 7. Set working directory to project root (so historical_processor can be imported)
+        repo_root = str(Path(__file__).resolve().parents[2])  # studio_gui/src/main.py -> repo root
+
+        # 8. Environment - add repo_root to PYTHONPATH so historical_processor can be imported
         env = os.environ.copy()
         env['PYTHONIOENCODING'] = 'utf-8'
+
+        # Add repo_root to PYTHONPATH
+        existing_pythonpath = env.get('PYTHONPATH', '')
+        if existing_pythonpath:
+            env['PYTHONPATH'] = f"{repo_root}{os.pathsep}{existing_pythonpath}"
+        else:
+            env['PYTHONPATH'] = repo_root
 
         # Check OpenAI key if GPT enabled
         if self.chk_use_gpt.isChecked():
@@ -2536,38 +2537,44 @@ class PostProcessTab(QWidget):
                 )
                 return
 
-        # 8. Log příkazu
+        # 9. Log command
         self.log.append('stdout', '=' * 70)
         self.log.append('stdout', f'Zpracovávám epizodu: {topic}/{lang}/{ep}')
         self.log.append('stdout', f'Segmentů: {len(segments)}')
         self.log.append('stdout', f'Output: {output_base}/{topic}/{lang}/{ep}/')
+        self.log.append('stdout', f'Working dir: {repo_root}')
+        self.log.append('stdout', f'Python executable: {sys.executable}')
+        self.log.append('stdout', f'Current cwd (before): {os.getcwd()}')
+        # Zkontroluj, že historical_processor existuje relativně k repo_root
+        hp_check = os.path.join(repo_root, 'historical_processor', '__init__.py')
+        self.log.append('stdout', f'historical_processor exists: {os.path.isfile(hp_check)} at {hp_check}')
         self.log.append('stdout', '=' * 70)
         self.log.append('stdout', f'Command: {" ".join(cmd)}')
         self.log.append('stdout', '=' * 70)
 
-        # 9. Spusť subprocess
+        # 10. Start subprocess from project root
         try:
             self.thread, self.worker = _start_qprocess(
                 cmd,
                 env,
                 self,
                 self._process_log_line,
-                self._on_episode_merged_finished
+                self._on_episode_merged_finished,
+                cwd=repo_root  # ← Pass working directory
             )
         except Exception as e:
             self.log.append('stderr', f'Failed to start subprocess: {e}')
             QMessageBox.critical(self, "Chyba", f"Nelze spustit subprocess:\n{e}")
             return
 
-        # 10. Update UI state
+        # 11. Update UI state
         self.btn_run_episode_merged.setEnabled(False)
         self.btn_run_episode.setEnabled(False)
         self.btn_run_selected.setEnabled(False)
         self.lbl_selected.setText(f"Processing: {ep}...")
 
-        # 11. Update PID label
+        # 12. Update PID label
         QTimer.singleShot(250, self._update_pid_label)
-
 
     def apply_current(self) -> None:
         if not self._current_source_path:
@@ -2674,7 +2681,91 @@ class PostProcessTab(QWidget):
             self.log.append('stderr', f'Cannot open manifest: {e}')
             QMessageBox.critical(self, "Chyba", f"Nelze otevřít manifest:\n{e}")
 
+    def _on_episode_merged_finished(self, code: int) -> None:
+        """Callback po dokončení episode merge"""
+        self.log.append('stdout', '=' * 70)
+        self.log.append('stdout', f'Process finished with exit code {code}')
+        self.log.append('stdout', '=' * 70)
 
+        # Re-enable buttons
+        self.btn_run_episode_merged.setEnabled(True)
+        self.btn_run_episode.setEnabled(True)
+        self.btn_run_selected.setEnabled(True)
+
+        if code == 0:
+            # Success
+            topic = self.cmb_topic.currentText()
+            lang = self.cmb_lang.currentText()
+            items = self.lst_episodes.selectedItems()
+
+            if items:
+                ep = items[0].text()
+
+                # Find output file
+                merged_path = Path(self.postproc_root()) / topic / lang / ep / 'episode_merged.txt'
+
+                if merged_path.exists():
+                    size_kb = merged_path.stat().st_size / 1024
+                    self.log.append('stdout', '✓ Episode merged successfully!')
+                    self.log.append('stdout', f'  Output: {merged_path}')
+                    self.log.append('stdout', f'  Size: {size_kb:.1f} KB')
+
+                    # Check for manifest
+                    manifest_path = merged_path.parent / 'manifest.json'
+                    if manifest_path.exists():
+                        self.log.append('stdout', f'  Manifest: {manifest_path.name}')
+
+                    self.lbl_selected.setText(f"Done: {ep}")
+
+                    # Offer to open
+                    from PySide6.QtWidgets import QMessageBox
+                    resp = QMessageBox.question(
+                        self,
+                        "Zpracování dokončeno",
+                        f"Epizoda {ep} byla úspěšně zpracována.\n\nOtevřít výstupní složku?",
+                        QMessageBox.Yes | QMessageBox.No
+                    )
+                    if resp == QMessageBox.Yes:
+                        self.open_output_folder()
+                else:
+                    self.log.append('stderr', f'✗ Output file not found: {merged_path}')
+                    self.lbl_selected.setText(f"Error: {ep}")
+            else:
+                self.log.append('stdout', '✓ Processing finished')
+                self.lbl_selected.setText("Done")
+        else:
+            self.log.append('stderr', f'✗ Episode processing failed (exit code {code})')
+            self.lbl_selected.setText("Failed")
+
+            # Show error dialog
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.warning(
+                self,
+                "Chyba zpracování",
+                f"Zpracování epizody selhalo s exit code {code}.\n\nZkontroluj log pro detaily."
+            )
+
+        # Clear PID label
+        self.lbl_pid.setText("")
+
+        # Cleanup thread
+        if self.thread:
+            self.thread.quit()
+            self.thread.wait()
+            self.thread = None
+            self.worker = None
+
+    def _update_pid_label(self) -> None:
+        """Update PID label s process ID"""
+        try:
+            if self.worker and hasattr(self.worker, 'pid'):
+                pid = self.worker.pid()
+                if pid:
+                    self.lbl_pid.setText(f"PID: {pid}")
+                else:
+                    self.lbl_pid.setText("")
+        except Exception:
+            self.lbl_pid.setText("")
 
 # Minimal main window and entrypoint
 class MainWindow(QMainWindow):
