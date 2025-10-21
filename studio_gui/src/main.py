@@ -928,6 +928,8 @@ class PromptsTab(QWidget):
             topics = []
 
         topics.sort()
+        # Filter out hidden folders (starting with dot)
+        topics = [t for t in topics if not t.startswith('.')]
         self.log.append('stdout', f'Final topics list ({len(topics)}): {topics}')
         self.log.append('stdout', '=== PromptsTab.refresh_topics() END ===')
 
@@ -991,6 +993,13 @@ class PromptsTab(QWidget):
 
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
+        # Ensure NC_OUTPUTS_ROOT is set so generate_prompts.py finds the right paths
+        nc_root = os.environ.get("NC_OUTPUTS_ROOT")
+        if not nc_root:
+            # Use parent of osnova_root as NC_OUTPUTS_ROOT
+            nc_root = str(Path(self.osnova_root()).parent)
+            env["NC_OUTPUTS_ROOT"] = nc_root
+            self.log.append("stdout", f"Setting NC_OUTPUTS_ROOT={nc_root}")
 
         # Launch using SubprocessController (QProcess)
         self.thread, self.worker = _start_qprocess(cmd, env, self, self.log.append, self.on_finished)
