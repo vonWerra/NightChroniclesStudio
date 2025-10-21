@@ -1499,6 +1499,7 @@ class NarrationTab(QWidget):
         eps.sort()
         for ep in eps:
             item = QListWidgetItem(ep)
+            item.setData(Qt.UserRole, ep)
             self.lst_episodes.addItem(item)
 
         # DEBUG: Log final count
@@ -1637,6 +1638,8 @@ class NarrationTab(QWidget):
             self.btn_run.setEnabled(False)
             return
         ep = items[0].data(Qt.UserRole)
+        if not ep:
+            ep = items[0].text()
         self.lbl_selected.setText(f"Selected: {ep}")
         self.btn_run.setEnabled(True)
         # populate prompts list for this episode
@@ -1753,6 +1756,8 @@ class NarrationTab(QWidget):
             self.log.append('stderr', 'Vyberte epizodu ze seznamu.')
             return
         ep = items[0].data(Qt.UserRole)
+        if not ep:
+            ep = items[0].text()
         topic = self.cmb_topic.currentText().strip()
         lang = self.cmb_lang.currentText().strip()
         if not topic or not lang:

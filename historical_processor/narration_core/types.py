@@ -46,3 +46,6 @@ class FormatterConfig:
     use_single_ellipsis_char: bool = True  # '…' instead of '...'
     use_en_dash_for_aside: bool = True  # ' – '
     quotes_style: str = "auto"  # auto per language
+    # soft mode settings
+    strict_sentence_split: bool = False  # False = warn only, True = auto-split
+    max_sentence_words: int = 30  # threshold for warning/splitting

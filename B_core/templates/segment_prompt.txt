@@ -24,6 +24,20 @@ LANGUAGE REQUIREMENTS
 - Numbers style: {NUMBERS_STYLE} (recommended: digits for years; words elsewhere).
 - Balanced sentence length; avoid abrupt stops and overly long sentences.
 
+CRITICAL STYLE REQUIREMENTS (MUST FOLLOW)
+- Use OBJECTIVE THIRD-PERSON voice throughout
+- NEVER use possessive first-person plural pronouns:
+  * English: "our", "my", "ours"
+  * Czech: "náš", "naše", "našeho", "našem", "naší"
+  * German: "unser", "unsere", "unserem"
+  * Spanish: "nuestro", "nuestra", "nuestros"
+  * French: "notre", "nos"
+- Refer to the series by name: "the documentary series X" or "the series X" NOT "our series"
+- Each sentence MUST be 15-30 words maximum
+- If a sentence would naturally exceed 30 words, split it at a comma, semicolon, or conjunction
+- Be engaging but maintain objective, documentary tone
+- Avoid phrases like "we will see", "we will explore", "let us examine"
+
 FACTUALITY & SOURCING
 - Use established consensus; mention uncertainties only if essential and briefly.
 - Base on these sources (subset relevant to this MSP): {SOURCES_SEGMENT}
@@ -49,4 +63,6 @@ closing_handoff_present: yes|no
 segment_focus_covered: yes|no
 overlap_with_other_msps: none|minor|major
 language_check: native-like|needs-rewrite
+max_sentence_length: <integer - longest sentence in words>
+possessive_pronouns_used: yes|no
 notes: <one short sentence if any risk found>

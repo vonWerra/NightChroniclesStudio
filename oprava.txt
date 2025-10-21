@@ -1,380 +1,886 @@
-Vzhledem k tomu, že původní soubor má přes 5000 řádků, poskytnu ti patch - konkrétní sekce, které musíš nahradit v třídě PostProcessTab.
-Najdi třídu PostProcessTab a nahraď tyto metody:
-Hledej v souboru:
-pythonclass PostProcessTab(QWidget):
-Pak najdi a NAHRAĎ následující metody:
+Upravené soubory pro odstranění posesiv a kontrolu délky vět
+1️⃣ B_core/templates/segment_prompt.txt
+<artifact identifier="segment-prompt-updated" type="application/vnd.ant.code" language="plaintext" title="B_core/templates/segment_prompt.txt (Updated)">
+ROLE & INTENT
+You are a professional historian and long-form narrator. Write an idiomatic, fluent {LANG} voiceover paragraph that is 100% factual and source-grounded. No dialogue, no lists, no SSML, third-person only.
+SERIES & EPISODE CONTEXT
 
-1. NAHRAĎ metodu run_episode_merged()
-Najdi:
-pythondef run_episode_merged(self) -> None:
-    self.log.append('stdout', 'Run episode (merged) - not yet implemented')
-Nahraď za:
-pythondef run_episode_merged(self) -> None:
-    """Spojí celou epizodu s intro/transitions/formátováním pomocí episode-mode"""
+Series Title: {SERIES_TITLE}
+Total Episodes: {TOTAL_EPISODES}
+Episode Number: {EPISODE_NUMBER}
+Episode Title: {EPISODE_TITLE}
+Episode Description (1–2 lines): {EPISODE_DESCRIPTION}
 
-    # 1. Validace výběru epizody
-    items = self.lst_episodes.selectedItems()
-    if not items:
-        QMessageBox.warning(self, "Chyba", "Vyber epizodu ze seznamu")
-        return
+THIS SEGMENT (MSP FOCUS)
 
-    ep = items[0].text()
-    topic = self.cmb_topic.currentText().strip()
-    lang = self.cmb_lang.currentText().strip()
+Segment Index: {SEGMENT_INDEX} of {SEGMENTS_TOTAL}
+MSP Label (exact focus): {MSP_LABEL}
+Minutes Target: {MINUTES_TARGET}
+Target Words: {WORD_TARGET} (±{WORD_TOLERANCE_PERCENT}%)
+Coverage rule: Cover only this MSP. Do not borrow content from other MSPs. If continuity is needed, use exactly one brief bridging sentence.
 
-    if not topic or not lang:
-        QMessageBox.warning(self, "Chyba", "Topic nebo Language není nastaven")
-        return
+TRANSITIONS FOR SMOOTH STITCHING (MANDATORY)
 
-    # 2. Resolve paths
-    try:
-        ep_dir = Path(self._resolve_topic_dir(self.narration_root(), topic)) / lang / ep
-    except Exception as e:
-        self.log.append('stderr', f'Path resolution error: {e}')
-        QMessageBox.critical(self, "Chyba", f"Nelze vyřešit cestu k epizodě:\n{e}")
-        return
+Opening Hook: 1–2 short sentences that fluidly pick up the narrative flow from the previous segment without repeating its facts.
+Closing Handoff: exactly 1 sentence that gently primes the listener for the next segment without revealing its details.
 
-    if not ep_dir.exists():
-        QMessageBox.warning(self, "Chyba", f"Episode dir neexistuje:\n{ep_dir}")
-        return
+LANGUAGE REQUIREMENTS
 
-    # 3. Zkontroluj, že existují segmenty
-    segments = list(ep_dir.glob('segment_*.txt'))
-    if not segments:
-        QMessageBox.warning(self, "Chyba", f"Žádné segment_*.txt soubory v:\n{ep_dir}")
-        return
+Entire output in {LANG}, idiomatic and natural as written by a native historian.
+Numbers style: {NUMBERS_STYLE} (recommended: digits for years; words elsewhere).
+Balanced sentence length; avoid abrupt stops and overly long sentences.
 
-    self.log.append('stdout', f'Nalezeno {len(segments)} segmentů v epizodě {ep}')
+CRITICAL STYLE REQUIREMENTS (MUST FOLLOW)
 
-    # 4. Sestav příkaz pro runner_cli.py
-    runner = os.path.join('historical_processor', 'runner_cli.py')
-    if not os.path.isfile(runner):
-        QMessageBox.critical(self, "Chyba", f"Nenalezen runner:\n{runner}\n\nZkontroluj strukturu projektu.")
-        return
+Use OBJECTIVE THIRD-PERSON voice throughout
+NEVER use possessive first-person plural pronouns:
 
-    cmd = [
-        sys.executable,
-        runner,
-        '--input-dir', str(ep_dir),
-        '--episode-mode',
-    ]
+English: "our", "my", "ours"
+Czech: "náš", "naše", "našeho", "našem", "naší"
+German: "unser", "unsere", "unserem"
+Spanish: "nuestro", "nuestra", "nuestros"
+French: "notre", "nos"
 
-    # 5. Aplikuj GUI checkboxy
-    if self.chk_use_gpt.isChecked():
-        cmd.append('--use-gpt')
-        self.log.append('stdout', '  → GPT enabled (intro + transitions + grammar)')
+
+Refer to the series by name: "the documentary series X" or "the series X" NOT "our series"
+Each sentence MUST be 15-30 words maximum
+If a sentence would naturally exceed 30 words, split it at a comma, semicolon, or conjunction
+Be engaging but maintain objective, documentary tone
+Avoid phrases like "we will see", "we will explore", "let us examine"
+
+FACTUALITY & SOURCING
+
+Use established consensus; mention uncertainties only if essential and briefly.
+Base on these sources (subset relevant to this MSP): {SOURCES_SEGMENT}
+No speculation, no invented entities, no anachronisms.
+
+TTS-FRIENDLY RULES (ElevenLabs)
+
+Output body = one single paragraph; no headings, no bullets, no markup.
+Use punctuation for natural pauses; avoid parentheses and quotes where possible.
+
+OPTIONAL REFERENCE (DO NOT OUTPUT)
+{CANON_BLOCK}
+OUTPUT FORMAT (STRICT)
+Return exactly:
+
+The narration paragraph for this segment (one single paragraph).
+A line with three dashes.
+VALIDATION in YAML:
+
+---VALIDATION---
+est_wordcount: <integer>
+opening_hook_present: yes|no
+closing_handoff_present: yes|no
+segment_focus_covered: yes|no
+overlap_with_other_msps: none|minor|major
+language_check: native-like|needs-rewrite
+max_sentence_length: <integer - longest sentence in words>
+possessive_pronouns_used: yes|no
+notes: <one short sentence if any risk found>
+</artifact>
+
+2️⃣ historical_processor/narration_core/generator.py
+<artifact identifier="generator-updated" type="application/vnd.ant.code" language="python" title="historical_processor/narration_core/generator.py (Updated)">
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+from typing import Dict, Optional
+from dataclasses import asdict
+from openai import OpenAI
+from .types import EpisodeContext, GeneratedText, GeneratorConfig
+from .cache import NarrationCache
+INTRO_PROMPT_VERSION = "v2"
+TRANSITION_PROMPT_VERSION = "v2"
+class IntroGenerator:
+def init(self, api_key: str, cfg: Optional[GeneratorConfig] = None):
+self.client = OpenAI(api_key=api_key)
+self.cfg = cfg or GeneratorConfig()
+self.cache = NarrationCache()
+def generate(self, ctx: EpisodeContext) -> GeneratedText:
+    lang_names = {
+        'CS': 'Czech',
+        'EN': 'English',
+        'DE': 'German',
+        'ES': 'Spanish',
+        'FR': 'French'
+    }
+    lang_full = lang_names.get(ctx.language, 'Czech')
+
+    series_context_text = '\n'.join(f"- {item}" for item in ctx.series_context)
+    episode_desc_text = '\n'.join(f"- {item}" for item in ctx.episode_description)
+
+    user_prompt = f"""You are an experienced documentary narrator and editor. Create a compelling introduction for a historical documentary episode.
+SERIES INFORMATION:
+
+Title: {ctx.series_title}
+Context:
+{series_context_text}
+
+EPISODE INFORMATION:
+
+Episode {ctx.episode_index} of {ctx.total_episodes}
+Title: {ctx.episode_title}
+Description:
+{episode_desc_text}
+
+TASK:
+Write a 5-6 sentence introduction in {lang_full} that:
+
+Situates this episode within the overall series
+Highlights ONLY the main theme of this episode (no details)
+Creates anticipation for what follows
+Uses documentary-style, calm, professional narration
+Is written for text-to-speech (TTS) - clear, flowing sentences
+
+CRITICAL STYLE RULES (MUST FOLLOW):
+
+Use OBJECTIVE THIRD-PERSON voice throughout
+NEVER use possessive first-person plural pronouns:
+
+English: "our", "my", "ours"
+Czech: "náš", "naše", "našeho", "našem", "naší"
+German: "unser", "unsere", "unserem"
+Spanish: "nuestro", "nuestra", "nuestros"
+French: "notre", "nos"
+
+
+Refer to the series by name: "the documentary series {ctx.series_title}" or "the series {ctx.series_title}" NOT "our series"
+Each sentence MUST be 15-30 words maximum
+If a sentence would naturally exceed 30 words, split it at a comma or conjunction
+Avoid phrases like "we will see", "we will explore", "let us examine"
+Be engaging but maintain objective tone
+
+IMPORTANT:
+
+Write ONLY the introduction text, nothing else
+No metadata, no labels, no explanations
+Each sentence should be 15-30 words maximum
+Use natural, documentary language
+Be engaging but not sensationalist"""
+  payload = {
+      "type": "intro",
+      "version": INTRO_PROMPT_VERSION,
+      "language": ctx.language,
+      "series_title": ctx.series_title,
+      "episode_title": ctx.episode_title,
+      "episode_index": ctx.episode_index,
+      "total_episodes": ctx.total_episodes,
+      "episode_desc_preview": episode_desc_text[:500],
+  }
+  cached = self.cache.load(payload)
+  if cached:
+      return GeneratedText(text=cached.get("text", ""), provenance="gpt", prompt_hash=cached.get("cache_key"))
+
+  try:
+      response = self.client.chat.completions.create(
+          model=self.cfg.model,
+          messages=[
+              {"role": "system", "content": "You are a professional documentary narrator and editor specializing in historical content. You always use objective third-person voice and never use possessive pronouns like 'our' or 'my'."},
+              {"role": "user", "content": user_prompt},
+          ],
+          temperature=self.cfg.temperature_intro,
+          max_tokens=self.cfg.max_tokens_intro,
+      )
+      text = (response.choices[0].message.content or "").strip()
+      cache_key = self.cache.save(payload, {"text": text})
+      return GeneratedText(text=text, provenance="gpt", prompt_hash=cache_key)
+  except Exception as e:
+      # Fallback very simple intro (without possessives)
+      fallback = f"{ctx.episode_title} je součástí série {ctx.series_title}." if ctx.language == 'CS' else f"{ctx.episode_title} is part of the series {ctx.series_title}."
+      return GeneratedText(text=fallback, provenance="gpt", prompt_hash=None, meta={"error": str(e)})
+
+
+class TransitionGenerator:
+def init(self, api_key: str, cfg: Optional[GeneratorConfig] = None):
+self.client = OpenAI(api_key=api_key)
+self.cfg = cfg or GeneratorConfig()
+self.cache = NarrationCache()
+def generate(self, prev_segment: str, next_segment: str, language: str) -> GeneratedText:
+    lang_names = {
+        'CS': 'Czech',
+        'EN': 'English',
+        'DE': 'German',
+        'ES': 'Spanish',
+        'FR': 'French'
+    }
+    lang_full = lang_names.get(language, 'Czech')
+
+    prev_end = ' '.join(prev_segment.split()[-150:])
+    next_start = ' '.join(next_segment.split()[:150])
+
+    user_prompt = f"""You are an experienced documentary narrator creating smooth transitions between segments.
+PREVIOUS SEGMENT (ending):
+{prev_end}
+NEXT SEGMENT (beginning):
+{next_start}
+TASK:
+Write a 1-2 sentence transition in {lang_full} that:
+
+Smoothly connects the previous topic to the next using at least one concrete anchor (time/entity/keyword) present in the context
+Maintains chronological and thematic continuity
+Uses neutral, documentary style
+Does NOT summarize or remove content
+Avoids meta phrases and does not add new facts
+Is written for text-to-speech (TTS)
+
+CRITICAL STYLE RULES (MUST FOLLOW):
+
+Use OBJECTIVE THIRD-PERSON voice throughout
+NEVER use possessive pronouns:
+
+English: "our", "my", "ours"
+Czech: "náš", "naše", "našeho", "našem", "naší"
+German: "unser", "unsere", "unserem"
+Spanish: "nuestro", "nuestra"
+French: "notre", "nos"
+
+
+Each sentence MUST be 14-28 words maximum
+Avoid phrases like "we will now turn to", "let us examine"
+
+IMPORTANT:
+
+Write ONLY the transition text, nothing else
+No metadata, no labels, no explanations
+Each sentence should be ~14-28 words maximum
+Be brief but meaningful
+Maintain the documentary tone"""
+  payload = {
+      "type": "transition",
+      "version": TRANSITION_PROMPT_VERSION,
+      "language": language,
+      "prev_preview": prev_end[:400],
+      "next_preview": next_start[:400],
+  }
+  cached = self.cache.load(payload)
+  if cached:
+      return GeneratedText(text=cached.get("text", ""), provenance="gpt", prompt_hash=cached.get("cache_key"))
+
+  try:
+      response = self.client.chat.completions.create(
+          model=self.cfg.model,
+          messages=[
+              {"role": "system", "content": "You are a professional documentary narrator specializing in creating smooth narrative transitions. You always use objective third-person voice."},
+              {"role": "user", "content": user_prompt},
+          ],
+          temperature=self.cfg.temperature_transition,
+          max_tokens=self.cfg.max_tokens_transition,
+      )
+      text = (response.choices[0].message.content or "").strip()
+      cache_key = self.cache.save(payload, {"text": text})
+      return GeneratedText(text=text, provenance="gpt", prompt_hash=cache_key)
+  except Exception as e:
+      # Fallback transitions without possessives
+      fallback = "Na tomto pozadí se plynule přesouváme k následující události." if language == 'CS' else "Against this backdrop, the narrative moves seamlessly to the next development."
+      return GeneratedText(text=fallback, provenance="gpt", prompt_hash=None, meta={"error": str(e)})
+
+
+</artifact>
+
+3️⃣ historical_processor/narration_core/formatter.py
+<artifact identifier="formatter-updated" type="application/vnd.ant.code" language="python" title="historical_processor/narration_core/formatter.py (Updated)">
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+import re
+from typing import Dict, Optional, List
+try:
+from num2words import num2words  # type: ignore
+except Exception:  # pragma: no cover - optional
+num2words = None
+from .types import FormatterConfig
+from openai import OpenAI
+class TextFormatter:
+def init(self, cfg: FormatterConfig):
+self.cfg = cfg
+self.lang = cfg.language.upper()
+# --- Public API ---
+def format(self, text: str) -> str:
+    t = text
+    t = self._normalize_whitespace(t)
+    t = self._remove_bracketed_citations(t)
+    t = self._expand_abbreviations(t)
+    t = self._convert_years(t)
+    t = self._convert_numbers(t)
+    t = self._normalize_ellipsis(t)
+    t = self._normalize_quotes_and_dashes(t)
+    t = self._ensure_sentence_termination(t)
+
+    # 🆕 NOVÉ: Odstranění posesiv a validace délky vět
+    t = self._remove_possessive_pronouns(t)
+    t = self._validate_sentence_length(t, max_words=30)
+
+    if self.cfg.use_gpt_split or self.cfg.use_gpt_grammar:
+        t = self._gpt_edit(t)
     else:
-        self.log.append('stdout', '  → GPT disabled (offline mode)')
+        t = self._split_long_sentences(t)
 
-    if self.chk_prefer_existing.isChecked():
-        cmd.append('--prefer-existing')
-        self.log.append('stdout', '  → Will reuse existing merged files if available')
+    t = self._final_cleanup(t)
+    return t
 
-    if self.chk_force_rebuild.isChecked():
-        cmd.append('--force-rebuild')
-        self.log.append('stdout', '  → Force rebuild (ignoring cache)')
+# --- Steps ---
+def _normalize_whitespace(self, text: str) -> str:
+    # unify newlines and collapse multiple spaces
+    t = text.replace("\r\n", "\n").replace("\r", "\n")
+    t = re.sub(r"[\u200B\u200C\u200D\uFEFF]", "", t)  # remove zero width chars
+    t = re.sub(r"\s+", " ", t)
+    t = re.sub(r"\n\s*\n+", "\n\n", t)
+    return t.strip()
 
-    if self.chk_save_merged.isChecked():
-        cmd.append('--save-merged')
-    else:
-        self.log.append('stderr', '  ⚠ Save merged is OFF - no output will be written!')
+def _remove_bracketed_citations(self, text: str) -> str:
+    t = re.sub(r"\([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž]+,?\s+\d{4}\)", "", text)
+    t = re.sub(r"\[[^\]]+\]", "", t)
+    t = re.sub(r"(?i)podle\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž]+a?", "", t)
+    return t
 
-    # 6. Output dir override
-    output_base = self.postproc_root()
-    cmd.extend(['--output-dir', output_base])
+def _expand_abbreviations(self, text: str) -> str:
+    maps: Dict[str, Dict[str, str]] = {
+        'CS': {
+            'např.': 'například', 'tzv.': 'takzvaný', 'tj.': 'to jest', 'tzn.': 'to znamená',
+            'atd.': 'a tak dále', 'apod.': 'a podobně', 'resp.': 'respektive', 'popř.': 'popřípadě',
+            'cca': 'cirka', 'č.': 'číslo', 'str.': 'strana', 'odd.': 'oddíl', 'ods.': 'odstavec',
+            'kpt.': 'kapitán', 'plk.': 'plukovník', 'gen.': 'generál', 'dr.': 'doktor', 'prof.': 'profesor', 'ing.': 'inženýr'
+        },
+        'EN': {'e.g.': 'for example', 'i.e.': 'that is', 'etc.': 'et cetera', 'vs.': 'versus', 'ca.': 'circa', 'approx.': 'approximately', 'Dr.': 'Doctor', 'Prof.': 'Professor'},
+        'DE': {'z.B.': 'zum Beispiel', 'd.h.': 'das heißt', 'usw.': 'und so weiter', 'bzw.': 'beziehungsweise', 'ca.': 'circa', 'Dr.': 'Doktor', 'Prof.': 'Professor'},
+        'ES': {'p.ej.': 'por ejemplo', 'etc.': 'etcétera', 'aprox.': 'aproximadamente', 'Dr.': 'Doctor', 'Prof.': 'Profesor'},
+        'FR': {'p.ex.': 'par exemple', 'c.-à-d.': "c'est-à-dire", 'etc.': 'et cetera', 'env.': 'environ', 'Dr.': 'Docteur', 'Prof.': 'Professeur'},
+    }
+    m = maps.get(self.lang, maps['CS'])
+    t = text
+    for abbr, full in m.items():
+        t = re.sub(rf"\b{re.escape(abbr)}\b", full, t)
+    return t
 
-    # 7. Environment
-    env = os.environ.copy()
-    env['PYTHONIOENCODING'] = 'utf-8'
+def _convert_years(self, text: str) -> str:
+    if not num2words:
+        return text
+    def repl(m):
+        y = int(m.group(0))
+        try:
+            out = num2words(y, lang=self._n2w_lang())
+            return out.replace(" ", "").replace("-", "").replace("\u200B", "")
+        except Exception:
+            return m.group(0)
+    return re.sub(r"\b(1\d{3}|20\d{2})\b", repl, text)
 
-    # Check OpenAI key if GPT enabled
-    if self.chk_use_gpt.isChecked():
-        if not env.get('OPENAI_API_KEY'):
-            QMessageBox.warning(
-                self,
-                "Chyba",
-                "OPENAI_API_KEY není nastaven!\n\n"
-                "GPT mode vyžaduje OpenAI API klíč v environment proměnných."
-            )
-            return
+def _convert_numbers(self, text: str) -> str:
+    if not num2words:
+        return text
+    def repl(m):
+        n = int(m.group(0))
+        if 1 <= n <= 999:
+            try:
+                out = num2words(n, lang=self._n2w_lang())
+                return out.replace(" ", "").replace("-", "").replace("\u200B", "")
+            except Exception:
+                return m.group(0)
+        return m.group(0)
+    return re.sub(r"(?<!\d)\b([1-9]\d{0,2})(?!\d)", repl, text)
 
-    # 8. Log příkazu
-    self.log.append('stdout', '=' * 70)
-    self.log.append('stdout', f'Zpracovávám epizodu: {topic}/{lang}/{ep}')
-    self.log.append('stdout', f'Segmentů: {len(segments)}')
-    self.log.append('stdout', f'Output: {output_base}/{topic}/{lang}/{ep}/')
-    self.log.append('stdout', '=' * 70)
-    self.log.append('stdout', f'Command: {" ".join(cmd)}')
-    self.log.append('stdout', '=' * 70)
+def _normalize_ellipsis(self, text: str) -> str:
+    t = text
+    if self.cfg.use_single_ellipsis_char:
+        t = t.replace("...", "…")
+    # collapse multiple ellipses
+    t = re.sub(r"…{2,}", "…", t)
+    return t
 
-    # 9. Spusť subprocess
+def _normalize_quotes_and_dashes(self, text: str) -> str:
+    t = text
+    # normalize dashes
+    if self.cfg.use_en_dash_for_aside:
+        t = re.sub(r"\s+-\s+", " – ", t)
+    # basic quotes normalization (language-aware minimal)
+    if self.lang in ("CS", "DE"):
+        t = t.replace('"', '"')  # no-op placeholder, real mapping might be added later
+    elif self.lang == "EN":
+        t = t.replace('"', '"')
+    elif self.lang in ("ES", "FR"):
+        t = t.replace('"', '"')
+    return t
+
+def _ensure_sentence_termination(self, text: str) -> str:
+    # ensure each paragraph ends with terminal punctuation without relying on \p unicode classes
+    paragraphs = re.split(r"\n\n+", text.strip())
+    fixed = []
+    for p in paragraphs:
+        p = p.strip()
+        if not p:
+            continue
+        last = p[-1]
+        if last not in ".!?…":
+            p = p + "."
+        fixed.append(p)
+    t = "\n\n".join(fixed)
+    # ensure one space after punctuation, none before
+    t = re.sub(r"\s+([.,!?;:])", r"\1", t)
+    t = re.sub(r"([.,!?;:])\s*", r"\1 ", t)
+    return t
+
+def _remove_possessive_pronouns(self, text: str) -> str:
+    """Remove first-person plural possessive pronouns (NOVÁ METODA)."""
+
+    replacements = {
+        'CS': [
+            (r'\bnašeho\s+', ''),  # našeho seriálu -> seriálu
+            (r'\bnaše\s+', ''),     # naše epizoda -> epizoda
+            (r'\bnáš\s+', ''),      # náš dokument -> dokument
+            (r'\bv\s+našem\s+dokumentu\b', 'v tomto dokumentu'),
+            (r'\bv\s+naší\s+sérii\b', 'v této sérii'),
+            (r'\bv\s+našem\s+seriálu\b', 'v tomto seriálu'),
+            (r'\bdokumentárního\s+seriálu\s+našeho\b', 'dokumentárního seriálu'),
+            (r'\bsériím\s+našim\b', 'těmto sériím'),
+        ],
+        'EN': [
+            (r'\bour\s+series\b', 'the series'),
+            (r'\bour\s+documentary\b', 'the documentary'),
+            (r'\bour\s+episode\b', 'the episode'),
+            (r'\bin\s+our\s+', 'in the '),
+            (r'\bof\s+our\s+', 'of the '),
+            (r'\bour\s+', 'the '),  # fallback: our X -> the X
+        ],
+        'DE': [
+            (r'\bunserer\s+Serie\b', 'der Serie'),
+            (r'\bunserem\s+Dokumentarfilm\b', 'dem Dokumentarfilm'),
+            (r'\bunsere\s+Episode\b', 'die Episode'),
+            (r'\bunser\s+', 'der '),
+            (r'\bunsere\s+', 'die '),
+            (r'\bunserem\s+', 'dem '),
+        ],
+        'ES': [
+            (r'\bnuestra\s+serie\b', 'la serie'),
+            (r'\bnuestro\s+documental\b', 'el documental'),
+            (r'\bnuestro\s+episodio\b', 'el episodio'),
+            (r'\bnuestro\s+', 'el '),
+            (r'\bnuestra\s+', 'la '),
+            (r'\bnuestros\s+', 'los '),
+        ],
+        'FR': [
+            (r'\bnotre\s+série\b', 'la série'),
+            (r'\bnotre\s+documentaire\b', 'le documentaire'),
+            (r'\bnotre\s+épisode\b', "l'épisode"),
+            (r'\bnotre\s+', 'le '),
+            (r'\bnos\s+', 'les '),
+        ]
+    }
+
+    t = text
+    for pattern, repl in replacements.get(self.lang, []):
+        t = re.sub(pattern, repl, t, flags=re.IGNORECASE)
+
+    # Clean up potential double spaces
+    t = re.sub(r'\s+', ' ', t)
+
+    return t
+
+def _validate_sentence_length(self, text: str, max_words: int = 30) -> str:
+    """Split sentences longer than max_words at natural breaks (NOVÁ METODA)."""
+    sentences = re.split(r'(?<=[.!?…])\s+', text)
+    fixed = []
+
+    for s in sentences:
+        words = s.split()
+        if len(words) <= max_words:
+            fixed.append(s)
+            continue
+
+        # Split long sentence at natural breaks
+        parts = self._intelligent_split(words, max_words)
+        fixed.extend(parts)
+
+    return ' '.join(fixed)
+
+def _split_long_sentences(self, text: str) -> str:
+    # heuristic: split sentences longer than ~30 words at commas or conjunctions
+    sentences = re.split(r"(?<=[.!?…])\s+", text)
+    out = []
+    for s in sentences:
+        words = s.split()
+        if len(words) <= 30:
+            out.append(s)
+            continue
+        out.extend(self._intelligent_split(words, max_words=30))
+    return " ".join(out)
+
+def _intelligent_split(self, words: List[str], max_words: int = 30) -> List[str]:
+    """Split near middle at comma or conjunction"""
+    n = len(words)
+    if n <= max_words:
+        return [" ".join(words)]
+
+    mid = n // 2
+
+    # prefer comma near middle
+    comma_idx = None
+    for i in range(max(10, mid - 10), min(n - 10, mid + 10)):
+        if ',' in words[i]:
+            comma_idx = i
+            break
+
+    if comma_idx is not None:
+        first_part = " ".join(words[:comma_idx + 1]).rstrip(", ")
+        second_part = " ".join(words[comma_idx + 1:])
+        return [first_part + ".", self._capitalize_first(second_part)]
+
+    # fallback: split at nearest conjunction
+    conj = {"a", "ale", "však", "zatímco", "protože", "nebo", "and", "but", "while", "because", "or"}
+    best = None
+    for i in range(max(10, mid - 10), min(n - 10, mid + 10)):
+        token = words[i].strip(",").lower()
+        if token in conj:
+            best = i
+            break
+
+    if best is not None:
+        first_part = " ".join(words[:best]).rstrip(", ")
+        second_part = " ".join(words[best:])
+        return [first_part + ".", self._capitalize_first(second_part)]
+
+    # last resort: hard split
+    first_part = " ".join(words[:mid]).rstrip(", ")
+    second_part = " ".join(words[mid:])
+    return [first_part + ".", self._capitalize_first(second_part)]
+
+def _capitalize_first(self, s: str) -> str:
+    return s[:1].upper() + s[1:] if s else s
+
+def _final_cleanup(self, text: str) -> str:
+    t = text
+    # collapse duplicate punctuation
+    t = re.sub(r"([.!?]){2,}", r"\1", t)
+    # ensure spacing rules
+    t = re.sub(r"\s+([.,!?;:])", r"\1", t)
+    t = re.sub(r"([.,!?;:])\s*", r"\1 ", t)
+    # collapse multiple newlines and spaces
+    t = re.sub(r"\n\s*\n+", "\n\n", t)
+    t = re.sub(r"\s+", " ", t)
+    return t.strip()
+
+# --- GPT assisted editing (optional) ---
+def _gpt_edit(self, text: str) -> str:
+    api_key = self.cfg.api_key
+    if not api_key:
+        # fallback to offline splitting if API missing
+        return self._split_long_sentences(text)
+    client = OpenAI(api_key=api_key)
+    lang_full = {
+        'CS': 'Czech', 'EN': 'English', 'DE': 'German', 'ES': 'Spanish', 'FR': 'French'
+    }.get(self.lang, 'Czech')
+
+    prompt = (
+        f"You are a professional {lang_full} text editor for documentary narration.\n"
+        "Rules:\n"
+        "1) Split only sentences longer than 30 words into 2 shorter sentences; keep meaning.\n"
+        "2) Fix only obvious grammar/spelling/punctuation errors conservatively.\n"
+        "3) Keep documentary, neutral tone.\n"
+        "4) Do not add or remove factual content.\n"
+        "5) NEVER use possessive pronouns like 'our', 'my' (Czech: 'náš', 'naše', 'našeho').\n"
+        "6) Use objective third-person voice throughout.\n"
+        "Return ONLY the processed text."
+    )
     try:
-        self.thread, self.worker = _start_qprocess(
-            cmd,
-            env,
-            self,
-            self._process_log_line,
-            self._on_episode_merged_finished
+        resp = client.chat.completions.create(
+            model=self.cfg.model,
+            messages=[
+                {"role": "system", "content": "You are a conservative text editor who maintains objective third-person voice."},
+                {"role": "user", "content": prompt + "\n\nTEXT:\n" + text},
+            ],
+            temperature=min(self.cfg.temperature_split, self.cfg.temperature_grammar),
+            max_tokens=20000,
         )
-    except Exception as e:
-        self.log.append('stderr', f'Failed to start subprocess: {e}')
-        QMessageBox.critical(self, "Chyba", f"Nelze spustit subprocess:\n{e}")
-        return
-
-    # 10. Update UI state
-    self.btn_run_episode_merged.setEnabled(False)
-    self.btn_run_episode.setEnabled(False)
-    self.btn_run_selected.setEnabled(False)
-    self.lbl_selected.setText(f"Processing: {ep}...")
-
-    # 11. Update PID label
-    QTimer.singleShot(250, self._update_pid_label)
-
-2. PŘIDEJ novou metodu _update_pid_label()
-Přidej NOVOU metodu (hned za run_episode_merged):
-pythondef _update_pid_label(self) -> None:
-    """Update PID label s process ID"""
-    try:
-        if self.worker and hasattr(self.worker, 'pid'):
-            pid = self.worker.pid()
-            if pid:
-                self.lbl_pid.setText(f"PID: {pid}")
-            else:
-                self.lbl_pid.setText("")
+        out = (resp.choices[0].message.content or "").strip()
+        return out if out else text
     except Exception:
-        self.lbl_pid.setText("")
+        return self._split_long_sentences(text)
 
-3. PŘIDEJ novou metodu _on_episode_merged_finished()
-Přidej NOVOU metodu (hned za _update_pid_label):
-pythondef _on_episode_merged_finished(self, code: int) -> None:
-    """Callback po dokončení episode merge"""
-    self.log.append('stdout', '=' * 70)
-    self.log.append('stdout', f'Process finished with exit code {code}')
-    self.log.append('stdout', '=' * 70)
+def _n2w_lang(self) -> str:
+    mapping = {'CS': 'cs', 'EN': 'en', 'DE': 'de', 'ES': 'es', 'FR': 'fr'}
+    return mapping.get(self.lang, 'cs')
+</artifact>
 
-    # Re-enable buttons
-    self.btn_run_episode_merged.setEnabled(True)
-    self.btn_run_episode.setEnabled(True)
-    self.btn_run_selected.setEnabled(True)
+4️⃣ historical_processor/narration_core/validator.py (volitelné rozšíření)
+<artifact identifier="validator-updated" type="application/vnd.ant.code" language="python" title="historical_processor/narration_core/validator.py (Updated with sentence length check)">
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+import re
+from dataclasses import dataclass
+from typing import List, Set
+META_PHRASES = {
+"CS": [
+"v této části", "v této kapitole", "v následující části", "nyní se podíváme", "tato sekce",
+"v této epizodě", "v následující epizodě", "v příští části",
+],
+"EN": [
+"in this section", "in the following section", "now we will look", "this section",
+"in this episode", "in the next episode",
+],
+"DE": [
+"in diesem abschnitt", "im folgenden abschnitt", "nun betrachten wir", "diese sektion",
+"in dieser episode", "inRetry
 
-    if code == 0:
-        # Success
-        topic = self.cmb_topic.currentText()
-        lang = self.cmb_lang.currentText()
-        items = self.lst_episodes.selectedItems()
 
-        if items:
-            ep = items[0].text()
 
-            # Find output file
-            merged_path = Path(self.postproc_root()) / topic / lang / ep / 'episode_merged.txt'
 
-            if merged_path.exists():
-                size_kb = merged_path.stat().st_size / 1024
-                self.log.append('stdout', '✓ Episode merged successfully!')
-                self.log.append('stdout', f'  Output: {merged_path}')
-                self.log.append('stdout', f'  Size: {size_kb:.1f} KB')
 
-                # Check for manifest
-                manifest_path = merged_path.parent / 'manifest.json'
-                if manifest_path.exists():
-                    self.log.append('stdout', f'  Manifest: {manifest_path.name}')
 
-                self.lbl_selected.setText(f"Done: {ep}")
+        PJContinue <artifact identifier="validator-updated" type="application/vnd.ant.code" language="python" title="historical_processor/narration_core/validator.py (Updated with sentence length check)">
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+import re
+from dataclasses import dataclass
+from typing import List, Set
+META_PHRASES = {
+"CS": [
+"v této části", "v této kapitole", "v následující části", "nyní se podíváme", "tato sekce",
+"v této epizodě", "v následující epizodě", "v příští části",
+],
+"EN": [
+"in this section", "in the following section", "now we will look", "this section",
+"in this episode", "in the next episode",
+],
+"DE": [
+"in diesem abschnitt", "im folgenden abschnitt", "nun betrachten wir", "diese sektion",
+"in dieser episode", "in der nächsten episode",
+],
+"ES": [
+"en esta sección", "en la siguiente sección", "ahora veremos", "esta sección",
+"en este episodio", "en el próximo episodio",
+],
+"FR": [
+"dans cette section", "dans la section suivante", "nous allons maintenant", "cette section",
+"dans cet épisode", "dans le prochain épisode",
+],
+}
+POSSESSIVE_PATTERNS = {
+"CS": [r'\bnáš\b', r'\bnaše\b', r'\bnašeho\b', r'\bnaší\b', r'\bnašem\b'],
+"EN": [r'\bour\b', r'\bours\b', r'\bmy\b', r'\bmine\b'],
+"DE": [r'\bunser\b', r'\bunsere\b', r'\bunserem\b', r'\bunserer\b'],
+"ES": [r'\bnuestro\b', r'\bnuestra\b', r'\bnuestros\b', r'\bnuestras\b'],
+"FR": [r'\bnotre\b', r'\bnos\b', r'\bmon\b', r'\bma\b', r'\bmes\b'],
+}
+@dataclass
+class ValidationResult:
+ok: bool
+reasons: List[str]
+class TransitionQualityValidator:
+"""Validate that a transition is smooth, logical, and non-meta.
+Rules:
+- 1–2 sentences
+- avoid meta phrases (per language)
+- include at least one anchor (if anchors exist in prev/next): year/entity/keyword overlap
+- avoid copying long spans from prev/next (>50% token overlap)
+- no possessive pronouns (NEW)
+- sentences should be 14-28 words (NEW)
+"""
 
-                # Offer to open
-                resp = QMessageBox.question(
-                    self,
-                    "Zpracování dokončeno",
-                    f"Epizoda {ep} byla úspěšně zpracována.\n\nOtevřít výstupní složku?",
-                    QMessageBox.Yes | QMessageBox.No
-                )
-                if resp == QMessageBox.Yes:
-                    self.open_output_folder()
-            else:
-                self.log.append('stderr', f'✗ Output file not found: {merged_path}')
-                self.lbl_selected.setText(f"Error: {ep}")
-        else:
-            self.log.append('stdout', '✓ Processing finished')
-            self.lbl_selected.setText("Done")
-    else:
-        self.log.append('stderr', f'✗ Episode processing failed (exit code {code})')
-        self.lbl_selected.setText("Failed")
+SENT_SPLIT = re.compile(r"(?<=[.!?])\s+")
+YEAR_RE = re.compile(r"\b(1\d{3}|20\d{2})\b")
 
-        # Show error dialog
-        QMessageBox.warning(
-            self,
-            "Chyba zpracování",
-            f"Zpracování epizody selhalo s exit code {code}.\n\nZkontroluj log pro detaily."
-        )
+def __init__(self, language: str):
+    self.lang = language.upper()
+    self.meta_phrases = [p.lower() for p in META_PHRASES.get(self.lang, META_PHRASES["EN"])]
+    self.possessive_patterns = POSSESSIVE_PATTERNS.get(self.lang, POSSESSIVE_PATTERNS["EN"])
 
-    # Clear PID label
-    self.lbl_pid.setText("")
+def validate(self, prev: str, next_: str, transition: str) -> ValidationResult:
+    reasons: List[str] = []
 
-    # Cleanup thread
-    if self.thread:
-        self.thread.quit()
-        self.thread.wait()
-        self.thread = None
-        self.worker = None
+    # 1) sentence count 1–2
+    sentences = self._split_sentences(transition)
+    if len(sentences) == 0:
+        reasons.append("empty_transition")
+    if len(sentences) > 2:
+        reasons.append("too_many_sentences")
 
-4. NAHRAĎ metodu open_merged_file()
-Najdi:
-pythondef open_merged_file(self) -> None:
-    self.log.append('stdout', 'Open merged file - not yet implemented')
-Nahraď za:
-pythondef open_merged_file(self) -> None:
-    """Otevře episode_merged.txt v default editoru"""
-    topic = self.cmb_topic.currentText().strip()
-    lang = self.cmb_lang.currentText().strip()
-    items = self.lst_episodes.selectedItems()
+    low = transition.strip().lower()
 
-    if not items or not topic or not lang:
-        QMessageBox.warning(self, "Chyba", "Vyber epizodu")
-        return
+    # 2) meta phrases
+    if any(p in low for p in self.meta_phrases):
+        reasons.append("contains_meta_phrase")
 
-    ep = items[0].text()
-    merged_path = Path(self.postproc_root()) / topic / lang / ep / 'episode_merged.txt'
+    # 3) anchors
+    anchors_prev = self._anchors(prev)
+    anchors_next = self._anchors(next_)
+    anchors_any = anchors_prev | anchors_next
+    if anchors_any:
+        if not self._contains_any_anchor(low, anchors_any):
+            reasons.append("missing_anchor")
 
-    if not merged_path.exists():
-        QMessageBox.warning(
-            self,
-            "Soubor nenalezen",
-            f"Episode merged file neexistuje:\n{merged_path}\n\nSpusť nejprve 'Run episode (merged)'."
-        )
-        return
+    # 4) duplication check (Jaccard overlap > 0.5 with prev or next)
+    toks_tr = self._tokens(low)
+    if toks_tr:
+        for ctx in (prev, next_):
+            j = self._jaccard(toks_tr, self._tokens(ctx.lower()))
+            if j > 0.5:
+                reasons.append("too_similar_to_context")
+                break
 
-    try:
-        if sys.platform.startswith('win'):
-            os.startfile(str(merged_path))
-        elif sys.platform == 'darwin':
-            import subprocess
-            subprocess.Popen(['open', str(merged_path)])
-        else:
-            import subprocess
-            subprocess.Popen(['xdg-open', str(merged_path)])
+    # 🆕 5) Check for possessive pronouns
+    for pattern in self.possessive_patterns:
+        if re.search(pattern, transition, flags=re.IGNORECASE):
+            reasons.append("contains_possessive_pronoun")
+            break
 
-        self.log.append('stdout', f'Opened: {merged_path.name}')
-    except Exception as e:
-        self.log.append('stderr', f'Cannot open file: {e}')
-        QMessageBox.critical(self, "Chyba", f"Nelze otevřít soubor:\n{e}")
+    # 🆕 6) Check sentence length (14-28 words per sentence)
+    for sent in sentences:
+        word_count = len(sent.split())
+        if word_count < 14:
+            reasons.append(f"sentence_too_short_{word_count}_words")
+        elif word_count > 28:
+            reasons.append(f"sentence_too_long_{word_count}_words")
 
-5. NAHRAĎ metodu open_manifest()
-Najdi:
-pythondef open_manifest(self) -> None:
-    self.log.append('stdout', 'Open manifest - not yet implemented')
-Nahraď za:
-pythondef open_manifest(self) -> None:
-    """Otevře manifest.json v default JSON vieweru/editoru"""
-    topic = self.cmb_topic.currentText().strip()
-    lang = self.cmb_lang.currentText().strip()
-    items = self.lst_episodes.selectedItems()
+    return ValidationResult(ok=len(reasons) == 0, reasons=reasons)
 
-    if not items or not topic or not lang:
-        QMessageBox.warning(self, "Chyba", "Vyber epizodu")
-        return
+# --- helpers ---
+def _split_sentences(self, text: str) -> List[str]:
+    parts = re.split(r"(?<=[.!?])\s+", text.strip())
+    return [p for p in parts if p]
 
-    ep = items[0].text()
-    manifest_path = Path(self.postproc_root()) / topic / lang / ep / 'manifest.json'
+def _tokens(self, text: str) -> Set[str]:
+    # simplified tokenization without \p unicode classes
+    return {t for t in re.findall(r"[A-Za-zÀ-ÖØ-öø-ÿĀ-žḀ-ỿ0-9]+", text) if t}
 
-    if not manifest_path.exists():
-        QMessageBox.warning(
-            self,
-            "Soubor nenalezen",
-            f"Manifest.json neexistuje:\n{manifest_path}\n\nSpusť nejprve 'Run episode (merged)'."
-        )
-        return
+def _anchors(self, text: str) -> Set[str]:
+    s = set()
+    # years
+    s.update(self.YEAR_RE.findall(text))
+    # capitalized words (simple heuristic, ignore beginning of sentence effects)
+    for m in re.finditer(r"\b[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž]+\b", text):
+        s.add(m.group(0))
+    return s
 
-    try:
-        if sys.platform.startswith('win'):
-            os.startfile(str(manifest_path))
-        elif sys.platform == 'darwin':
-            import subprocess
-            subprocess.Popen(['open', str(manifest_path)])
-        else:
-            import subprocess
-            subprocess.Popen(['xdg-open', str(manifest_path)])
+def _contains_any_anchor(self, low_text: str, anchors: Set[str]) -> bool:
+    for a in anchors:
+        if a.lower() in low_text:
+            return True
+    return False
 
-        self.log.append('stdout', f'Opened: {manifest_path.name}')
-    except Exception as e:
-        self.log.append('stderr', f'Cannot open manifest: {e}')
-        QMessageBox.critical(self, "Chyba", f"Nelze otevřít manifest:\n{e}")
+def _jaccard(self, a: Set[str], b: Set[str]) -> float:
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    union = len(a | b)
+    return inter / max(1, union)
+class SegmentQualityValidator:
+"""Validate full segment narration (NEW CLASS for segment validation)."""
+def __init__(self, language: str):
+    self.lang = language.upper()
+    self.possessive_patterns = POSSESSIVE_PATTERNS.get(self.lang, POSSESSIVE_PATTERNS["EN"])
 
-6. NAHRAĎ metodu open_output_folder()
-Najdi existující open_output_folder() a nahraď celou za:
-pythondef open_output_folder(self) -> None:
-    """Otevře output složku pro vybranou epizodu, nebo postproc root"""
-    topic = self.cmb_topic.currentText().strip()
-    lang = self.cmb_lang.currentText().strip()
-    items = self.lst_episodes.selectedItems()
+def validate(self, text: str, max_sentence_words: int = 30) -> ValidationResult:
+    reasons: List[str] = []
 
-    if items and topic and lang:
-        # Open specific episode folder
-        ep = items[0].text()
-        path = Path(self.postproc_root()) / topic / lang / ep
-    elif topic and lang:
-        # Open topic/lang folder
-        path = Path(self.postproc_root()) / topic / lang
-    else:
-        # Open postproc root
-        path = Path(self.postproc_root())
+    # 1) Check for possessive pronouns
+    for pattern in self.possessive_patterns:
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            reasons.append("contains_possessive_pronoun")
+            break
 
-    if not path.exists():
-        QMessageBox.warning(
-            self,
-            "Složka nenalezena",
-            f"Output složka neexistuje:\n{path}\n\nSpusť nejprve zpracování epizody."
-        )
-        return
+    # 2) Check sentence length
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+    for i, sent in enumerate(sentences, 1):
+        word_count = len(sent.split())
+        if word_count > max_sentence_words:
+            reasons.append(f"sentence_{i}_too_long_{word_count}_words")
 
-    try:
-        if sys.platform.startswith('win'):
-            os.startfile(str(path))
-        elif sys.platform == 'darwin':
-            import subprocess
-            subprocess.Popen(['open', str(path)])
-        else:
-            import subprocess
-            subprocess.Popen(['xdg-open', str(path)])
+    # 3) Check for meta-narrative phrases
+    meta_phrases = META_PHRASES.get(self.lang, META_PHRASES["EN"])
+    low = text.lower()
+    for phrase in meta_phrases:
+        if phrase in low:
+            reasons.append(f"contains_meta_phrase_{phrase}")
 
-        self.log.append('stdout', f'Opened folder: {path}')
-    except Exception as e:
-        self.log.append('stderr', f'Cannot open folder: {e}')
-        QMessageBox.critical(self, "Chyba", f"Nelze otevřít složku:\n{e}")
+    return ValidationResult(ok=len(reasons) == 0, reasons=reasons)
+</artifact>
 
-7. ZKONTROLUJ metodu __init__() v PostProcessTab
-Ujisti se, že máš v __init__() vytvořený self.lbl_pid:
-Najdi v metodě __init__() sekci kde se vytváří opts layout a najdi:
-pythonself.lbl_selected = QLabel("No episode selected", self)
-opts.addWidget(self.lbl_selected)
-A přidej HNED ZA TO (pokud tam není):
-pythonself.lbl_pid = QLabel("", self)
-opts.addWidget(self.lbl_pid)
+📋 Souhrn změn
+✅ segment_prompt.txt
 
-Shrnutí změn
-V třídě PostProcessTab:
+➕ Sekce "CRITICAL STYLE REQUIREMENTS"
+➕ Explicitní zákaz posesiv pro všechny jazyky
+➕ Požadavek max 30 slov na větu
+➕ Validační pole max_sentence_length a possessive_pronouns_used
 
-✅ NAHRAĎ: run_episode_merged() - 140 řádků nového kódu
-✅ PŘIDEJ: _update_pid_label() - NOVÁ metoda, 10 řádků
-✅ PŘIDEJ: _on_episode_merged_finished() - NOVÁ metoda, 70 řádků
-✅ NAHRAĎ: open_merged_file() - 35 řádků
-✅ NAHRAĎ: open_manifest() - 35 řádků
-✅ NAHRAĎ: open_output_folder() - 40 řádků
-✅ ZKONTROLUJ: __init__() má self.lbl_pid
+✅ generator.py
 
-Celkem: ~330 řádků změn v 1 souboru
+➕ Sekce "CRITICAL STYLE RULES" v IntroGenerator
+➕ Sekce "CRITICAL STYLE RULES" v TransitionGenerator
+➕ Aktualizace system prompts pro zamezení posesiv
+➕ Fallback texty bez posesiv
+🔄 Zvýšená verze promptů (v1 → v2)
 
-Test po úpravách
-bash# 1. Syntax check
-python -m py_compile studio_gui/src/main.py
+✅ formatter.py
 
-# 2. Spusť GUI
-python -m studio_gui.src.main
+➕ _remove_possessive_pronouns() – odstraní "náš/our/unser" atd.
+➕ _validate_sentence_length() – rozdělí věty delší než 30 slov
+🔄 Integrace obou metod do hlavní format() metody
+🔄 Aktualizace _gpt_edit() pro zákaz posesiv
 
-# 3. V PostProcess tabu:
-# - Vyber topic, lang, episode
-# - Zaškrtni "Use GPT"
-# - Klikni "Run episode (merged)"
-# - Sleduj log
+✅ validator.py
 
-Toto je kompletní sada změn. Potřebuješ ještě něco upřesnit?
+➕ POSSESSIVE_PATTERNS – regex vzory pro detekci posesiv
+➕ Kontrola posesiv v TransitionQualityValidator
+➕ Kontrola délky vět (14-28 slov pro transitions)
+➕ Nová třída SegmentQualityValidator pro validaci celých segmentů
+
+
+🚀 Jak nasadit změny
+1️⃣ Záloha původních souborů
+bashcp B_core/templates/segment_prompt.txt B_core/templates/segment_prompt.txt.bak
+cp historical_processor/narration_core/generator.py historical_processor/narration_core/generator.py.bak
+cp historical_processor/narration_core/formatter.py historical_processor/narration_core/formatter.py.bak
+cp historical_processor/narration_core/validator.py historical_processor/narration_core/validator.py.bak
+2️⃣ Nahraď soubory novými verzemi
+Zkopíruj obsah artefaktů do odpovídajících souborů.
+3️⃣ Otestuj na malém vzorku
+bash# Vygeneruj jeden segment pro test
+python B_core/generate_prompts.py --topic "test_topic" --language CS
+python claude_generator/runner_cli.py --topic "test_topic" --language CS --episodes ep01
+python historical_processor/runner_cli.py --input-dir outputs/narration/test_topic/CS/ep01 --episode-mode
+4️⃣ Zkontroluj výstup
+bash# Zkontroluj, že výstup neobsahuje "našeho" a má krátké věty
+cat outputs/postprocess/test_topic/CS/ep01/episode_merged.txt
+```
+
+---
+
+## 🎯 Očekávané výsledky
+
+### ❌ **PŘED (špatně):**
+```
+Vítejte v prvním dílu našeho dokumentárního seriálu "Bitva o dukelský průsmyk",
+kde se budeme zabývat klíčovými událostmi, které ovlivnily průběh celé operace
+a měly zásadní dopad na další vývoj situace na východní frontě během závěrečné
+fáze druhé světové války v roce 1944.
+```
+
+### ✅ **PO (správně):**
+```
+Vítejte v prvním dílu dokumentárního seriálu "Bitva o dukelský průsmyk".
+Tato epizoda se zabývá klíčovými událostmi, které ovlivnily průběh operace.
+Tyto události měly zásadní dopad na vývoj situace na východní frontě
+během závěrečné fáze druhé světové války v roce 1944.
+Změny:
+
+❌ našeho → ✅ odstraněno
+❌ 1 dlouhá věta (45 slov) → ✅ 3 krátké věty (12, 14, 19 slov)
+✅ Objektivní third-person hlas
+✅ Plynulý dokumentární styl
+
+
+🔍 Debugging
+Pokud stále vidíš "našeho" nebo dlouhé věty:
+
+Zkontroluj cache – narration_core používá cache, smaž .cache/narration_core/
+Zkontroluj verzi promptů – měly by být v2
+Zkontroluj logy – podívej se do outputs/*/logs/ na chyby
+Manuální test formateru:
+
+pythonfrom historical_processor.narration_core.formatter import TextFormatter
+from historical_processor.narration_core.types import FormatterConfig
+
+cfg = FormatterConfig(language='CS', use_gpt_split=False, use_gpt_grammar=False)
+fmt = TextFormatter(cfg)
+
+test_text = "Vítejte v prvním dílu našeho dokumentárního seriálu..."
+result = fmt.format(test_text)
+print(result)

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Set
 
 
@@ -13,7 +13,7 @@ META_PHRASES = {
     ],
     "EN": [
         "in this section", "in the following section", "now we will look", "this section",
-        "in this episode", "in the next episode",
+        "in this episode", "in the next episode", "we will see", "we will explore", "let us examine",
     ],
     "DE": [
         "in diesem abschnitt", "im folgenden abschnitt", "nun betrachten wir", "diese sektion",
@@ -26,6 +26,25 @@ META_PHRASES = {
     "FR": [
         "dans cette section", "dans la section suivante", "nous allons maintenant", "cette section",
         "dans cet épisode", "dans le prochain épisode",
+    ],
+}
+
+POSSESSIVE_PATTERNS = {
+    "CS": [
+        r'\bnáš(eho|emu|ím|em|e|i|ich|imi)?\b',  # náš + all cases
+        r'\bnaš(eho|emu|ím|em|e|í|ích|ím|imi)?\b',  # naš + all cases
+    ],
+    "EN": [
+        r'\bour\b', r'\bours\b', r'\bmy\b', r'\bmine\b'
+    ],
+    "DE": [
+        r'\bunser(e|em|er|es|en)?\b'
+    ],
+    "ES": [
+        r'\bnuestro(s)?\b', r'\bnuestra(s)?\b'
+    ],
+    "FR": [
+        r'\bnotre\b', r'\bnos\b', r'\bmon\b', r'\bma\b', r'\bmes\b'
     ],
 }
 
@@ -44,6 +63,8 @@ class TransitionQualityValidator:
     - avoid meta phrases (per language)
     - include at least one anchor (if anchors exist in prev/next): year/entity/keyword overlap
     - avoid copying long spans from prev/next (>50% token overlap)
+    - no possessive pronouns
+    - sentences should be 14-28 words
     """
 
     SENT_SPLIT = re.compile(r"(?<=[.!?])\s+")
@@ -52,6 +73,7 @@ class TransitionQualityValidator:
     def __init__(self, language: str):
         self.lang = language.upper()
         self.meta_phrases = [p.lower() for p in META_PHRASES.get(self.lang, META_PHRASES["EN"])]
+        self.possessive_patterns = POSSESSIVE_PATTERNS.get(self.lang, POSSESSIVE_PATTERNS["EN"])
 
     def validate(self, prev: str, next_: str, transition: str) -> ValidationResult:
         reasons: List[str] = []
@@ -85,6 +107,20 @@ class TransitionQualityValidator:
                     reasons.append("too_similar_to_context")
                     break
 
+        # 🆕 5) Check for possessive pronouns
+        for pattern in self.possessive_patterns:
+            if re.search(pattern, transition, flags=re.IGNORECASE):
+                reasons.append("contains_possessive_pronoun")
+                break
+
+        # 🆕 6) Check sentence length (14-28 words per sentence)
+        for i, sent in enumerate(sentences, 1):
+            word_count = len(sent.split())
+            if word_count < 14:
+                reasons.append(f"sentence_{i}_too_short_{word_count}_words")
+            elif word_count > 28:
+                reasons.append(f"sentence_{i}_too_long_{word_count}_words")
+
         return ValidationResult(ok=len(reasons) == 0, reasons=reasons)
 
     # --- helpers ---
@@ -117,3 +153,36 @@ class TransitionQualityValidator:
         inter = len(a & b)
         union = len(a | b)
         return inter / max(1, union)
+
+
+class SegmentQualityValidator:
+    """Validate full segment narration for style and length compliance."""
+
+    def __init__(self, language: str):
+        self.lang = language.upper()
+        self.possessive_patterns = POSSESSIVE_PATTERNS.get(self.lang, POSSESSIVE_PATTERNS["EN"])
+        self.meta_phrases = [p.lower() for p in META_PHRASES.get(self.lang, META_PHRASES["EN"])]
+
+    def validate(self, text: str, max_sentence_words: int = 30) -> ValidationResult:
+        reasons: List[str] = []
+
+        # 1) Check for possessive pronouns
+        for pattern in self.possessive_patterns:
+            if re.search(pattern, text, flags=re.IGNORECASE):
+                reasons.append("contains_possessive_pronoun")
+                break
+
+        # 2) Check sentence length
+        sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+        for i, sent in enumerate(sentences, 1):
+            word_count = len(sent.split())
+            if word_count > max_sentence_words:
+                reasons.append(f"sentence_{i}_exceeds_{word_count}_words")
+
+        # 3) Check for meta-narrative phrases
+        low = text.lower()
+        for phrase in self.meta_phrases:
+            if phrase in low:
+                reasons.append(f"contains_meta_phrase_{phrase.replace(' ', '_')}")
+
+        return ValidationResult(ok=len(reasons) == 0, reasons=reasons)

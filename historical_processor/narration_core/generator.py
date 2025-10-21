@@ -9,8 +9,9 @@ from .types import EpisodeContext, GeneratedText, GeneratorConfig
 from .cache import NarrationCache
 
 
-INTRO_PROMPT_VERSION = "v1"
-TRANSITION_PROMPT_VERSION = "v1"
+# 🆕 Version bump to invalidate old cache entries
+INTRO_PROMPT_VERSION = "v2"
+TRANSITION_PROMPT_VERSION = "v2"
 
 
 class IntroGenerator:
@@ -53,10 +54,24 @@ Write a 5-6 sentence introduction in {lang_full} that:
 4. Uses documentary-style, calm, professional narration
 5. Is written for text-to-speech (TTS) - clear, flowing sentences
 
+CRITICAL STYLE RULES (MUST FOLLOW):
+- Use OBJECTIVE THIRD-PERSON voice throughout
+- NEVER use possessive first-person plural pronouns:
+  * English: "our", "my", "ours"
+  * Czech: "náš", "naše", "našeho", "našem", "naší"
+  * German: "unser", "unsere", "unserem"
+  * Spanish: "nuestro", "nuestra", "nuestros"
+  * French: "notre", "nos"
+- Refer to the series by name: "the documentary series {ctx.series_title}" or "the series {ctx.series_title}" NOT "our series"
+- Each sentence MUST be 15-30 words maximum
+- If a sentence would naturally exceed 30 words, split it at a comma or conjunction
+- Avoid phrases like "we will see", "we will explore", "let us examine"
+- Be engaging but maintain objective tone
+
 IMPORTANT:
 - Write ONLY the introduction text, nothing else
 - No metadata, no labels, no explanations
-- Each sentence should be 20-30 words maximum
+- Each sentence should be 15-30 words maximum
 - Use natural, documentary language
 - Be engaging but not sensationalist"""
 
@@ -78,7 +93,7 @@ IMPORTANT:
             response = self.client.chat.completions.create(
                 model=self.cfg.model,
                 messages=[
-                    {"role": "system", "content": "You are a professional documentary narrator and editor specializing in historical content."},
+                    {"role": "system", "content": "You are a professional documentary narrator and editor specializing in historical content. You always use objective third-person voice and never use possessive pronouns like 'our' or 'my'."},
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=self.cfg.temperature_intro,
@@ -88,9 +103,18 @@ IMPORTANT:
             cache_key = self.cache.save(payload, {"text": text})
             return GeneratedText(text=text, provenance="gpt", prompt_hash=cache_key)
         except Exception as e:
-            # Fallback very simple intro
-            fallback = f"{ctx.episode_title} je součástí série {ctx.series_title}."
-            return GeneratedText(text=fallback, provenance="gpt", prompt_hash=None, meta={"error": str(e)})
+            # 🆕 Improved fallback without possessives
+            if ctx.language == 'CS':
+                fallback = f"{ctx.episode_title} je součástí dokumentárního seriálu {ctx.series_title}."
+            elif ctx.language == 'DE':
+                fallback = f"{ctx.episode_title} ist Teil der Dokumentarserie {ctx.series_title}."
+            elif ctx.language == 'ES':
+                fallback = f"{ctx.episode_title} es parte de la serie documental {ctx.series_title}."
+            elif ctx.language == 'FR':
+                fallback = f"{ctx.episode_title} fait partie de la série documentaire {ctx.series_title}."
+            else:
+                fallback = f"{ctx.episode_title} is part of the documentary series {ctx.series_title}."
+            return GeneratedText(text=fallback, provenance="fallback", prompt_hash=None, meta={"error": str(e)})
 
 
 class TransitionGenerator:
@@ -129,6 +153,17 @@ Write a 1-2 sentence transition in {lang_full} that:
 5. Avoids meta phrases and does not add new facts
 6. Is written for text-to-speech (TTS)
 
+CRITICAL STYLE RULES (MUST FOLLOW):
+- Use OBJECTIVE THIRD-PERSON voice throughout
+- NEVER use possessive pronouns:
+  * English: "our", "my", "ours"
+  * Czech: "náš", "naše", "našeho", "našem", "naší"
+  * German: "unser", "unsere", "unserem"
+  * Spanish: "nuestro", "nuestra"
+  * French: "notre", "nos"
+- Each sentence MUST be 14-28 words maximum
+- Avoid phrases like "we will now turn to", "let us examine"
+
 IMPORTANT:
 - Write ONLY the transition text, nothing else
 - No metadata, no labels, no explanations
@@ -151,7 +186,7 @@ IMPORTANT:
             response = self.client.chat.completions.create(
                 model=self.cfg.model,
                 messages=[
-                    {"role": "system", "content": "You are a professional documentary narrator specializing in creating smooth narrative transitions."},
+                    {"role": "system", "content": "You are a professional documentary narrator specializing in creating smooth narrative transitions. You always use objective third-person voice."},
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=self.cfg.temperature_transition,
@@ -161,5 +196,15 @@ IMPORTANT:
             cache_key = self.cache.save(payload, {"text": text})
             return GeneratedText(text=text, provenance="gpt", prompt_hash=cache_key)
         except Exception as e:
-            fallback = "Na tomto pozadí se plynule přesouváme k následující události."
-            return GeneratedText(text=fallback, provenance="gpt", prompt_hash=None, meta={"error": str(e)})
+            # 🆕 Improved multilingual fallback without possessives
+            if language == 'CS':
+                fallback = "Tato situace přirozeně vedla k dalším událostem."
+            elif language == 'DE':
+                fallback = "Diese Entwicklung führte natürlich zu weiteren Ereignissen."
+            elif language == 'ES':
+                fallback = "Esta situación condujo naturalmente a más acontecimientos."
+            elif language == 'FR':
+                fallback = "Cette situation a naturellement mené à d'autres événements."
+            else:
+                fallback = "This situation naturally led to further developments."
+            return GeneratedText(text=fallback, provenance="fallback", prompt_hash=None, meta={"error": str(e)})
