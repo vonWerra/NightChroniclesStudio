@@ -47,7 +47,7 @@ EPISODE INFORMATION:
 {episode_desc_text}
 
 TASK:
-Write a 5-6 sentence introduction in {lang_full} that:
+Write a 7-13 sentence introduction in {lang_full} that:
 1. Situates this episode within the overall series
 2. Highlights ONLY the main theme of this episode (no details)
 3. Creates anticipation for what follows
@@ -63,15 +63,16 @@ CRITICAL STYLE RULES (MUST FOLLOW):
   * Spanish: "nuestro", "nuestra", "nuestros"
   * French: "notre", "nos"
 - Refer to the series by name: "the documentary series {ctx.series_title}" or "the series {ctx.series_title}" NOT "our series"
-- Each sentence MUST be 15-30 words maximum
-- If a sentence would naturally exceed 30 words, split it at a comma or conjunction
+- Each sentence MUST be 20-40 words (neither too short nor too long)
+- Aim for 7-13 sentences total for proper pacing and depth
 - Avoid phrases like "we will see", "we will explore", "let us examine"
 - Be engaging but maintain objective tone
 
 IMPORTANT:
 - Write ONLY the introduction text, nothing else
 - No metadata, no labels, no explanations
-- Each sentence should be 15-30 words maximum
+- Each sentence should be 20-40 words
+- Total: 7-13 sentences
 - Use natural, documentary language
 - Be engaging but not sensationalist"""
 
@@ -145,7 +146,7 @@ NEXT SEGMENT (beginning):
 {next_start}
 
 TASK:
-Write a 1-2 sentence transition in {lang_full} that:
+Write a 7-13 sentence transition in {lang_full} that:
 1. Smoothly connects the previous topic to the next using at least one concrete anchor (time/entity/keyword) present in the context
 2. Maintains chronological and thematic continuity
 3. Uses neutral, documentary style
@@ -161,13 +162,15 @@ CRITICAL STYLE RULES (MUST FOLLOW):
   * German: "unser", "unsere", "unserem"
   * Spanish: "nuestro", "nuestra"
   * French: "notre", "nos"
-- Each sentence MUST be 14-28 words maximum
+- Each sentence MUST be 20-40 words (neither too short nor too long)
+- Aim for 7-13 sentences total to create a substantial, flowing transition
 - Avoid phrases like "we will now turn to", "let us examine"
 
 IMPORTANT:
 - Write ONLY the transition text, nothing else
 - No metadata, no labels, no explanations
-- Each sentence should be ~14-28 words maximum
+- Each sentence should be 20-40 words
+- Total: 7-13 sentences for smooth narrative flow
 - Be brief but meaningful
 - Maintain the documentary tone"""
 

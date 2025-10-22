@@ -274,12 +274,42 @@ def _to_slug(name: str) -> str:
 
 
 def _derive_episode_context_from_path(p: Path) -> Tuple[str, str, str, int]:
-    ep_dir = p.parent if p.name == "narration" else p
+    """Derive topic/lang/ep from input path, handling various structures.
+
+    Expected structures:
+    - .../topic/lang/ep/narration/
+    - .../topic/lang/ep/
+    - .../narration/ (ep is parent)
+    """
+    # Normalize: if p points to 'narration' subdir, go up
+    if p.name == "narration" and p.parent.name.startswith("ep"):
+        ep_dir = p.parent
+    elif p.name.startswith("ep"):
+        ep_dir = p
+    else:
+        # Try to find ep dir in parents
+        ep_dir = p
+        for parent in p.parents:
+            if parent.name.startswith("ep"):
+                ep_dir = parent
+                break
+
+    # Now derive lang and topic
     lang_dir = ep_dir.parent
     topic_dir = lang_dir.parent
+
+    # Extract clean names (avoid duplicates from nested paths)
     topic = topic_dir.name
     lang = lang_dir.name
     ep = ep_dir.name
+
+    # If we detect topic/lang/ep structure WITHIN topic name itself, clean it
+    # Example: "Vznik Československa\CS\ep01" in topic name -> just take first part
+    if "\\" in topic or "/" in topic:
+        # This means topic_dir.name contains nested path - take only first segment
+        topic = topic.split("\\")[0].split("/")[0]
+
+    # Extract episode number
     epi = 0
     for part in ep.replace("_", " ").split():
         if part.isdigit():
@@ -290,6 +320,7 @@ def _derive_episode_context_from_path(p: Path) -> Tuple[str, str, str, int]:
             if digits:
                 epi = int(digits)
                 break
+
     return topic, lang, ep, epi
 
 

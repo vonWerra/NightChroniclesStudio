@@ -2,8 +2,13 @@
 
 ## 📋 Přehled změn
 
-Tato aktualizace přidává:
+### **v2.1.0 (Aktuální):**
+1. ✅ **Délka vět**: 20-40 slov (bylo 15-30)
+2. ✅ **Intro**: 7-13 vět (bylo 5-6)
+3. ✅ **Transitions**: 7-13 vět (bylo 1-2)
+4. ✅ **Kontrola minimální délky** věty (20 slov)
 
+### **v2.0.0:**
 1. ✅ **Odstranění posesivních zájmen** (náš/our/unser) ve všech jazycích
 2. ✅ **Validace délky vět** (max 30 slov, soft/strict režim)
 3. ✅ **Rozšířené regex vzory** pro české pády (našeho, našem, naší...)
@@ -41,7 +46,7 @@ cfg = FormatterConfig(
     language='CS',
     use_gpt_split=False,
     use_gpt_grammar=False,
-    
+
     # 🆕 NOVÉ PARAMETRY
     strict_sentence_split=False,  # False = varování, True = auto-split
     max_sentence_words=30,        # Limit pro varování/splitting
@@ -251,5 +256,13 @@ Pokud narazíš na problém:
 
 ---
 
-**Poslední aktualizace:** 2024 (AI generated)  
-**Verze:** v2.0.0
+## 🔗 Související Dokumentace
+
+- **SENTENCE_LENGTH_UPDATE.md** – Detaily o změnách v2.1.0
+- **CHANGES_v2.1.0.md** – Technický changelog
+- **IMPLEMENTATION_SUMMARY.md** – Technický souhrn v2.0.0
+
+---
+
+**Poslední aktualizace:** 2024 (AI generated)
+**Verze:** v2.1.0 (upraveno pro nové limity)

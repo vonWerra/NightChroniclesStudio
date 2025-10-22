@@ -2171,55 +2171,61 @@ class PostProcessTab(QWidget):
 
 
     def refresh_topics(self) -> None:
-        # Try to load cached narration index for faster topic listing
-        try:
-            tmp_dir = os.path.join('studio_gui', '.tmp')
-            from .fs_index import load_index
-            idx = load_index(os.path.join(tmp_dir, 'narration_index.json'))
-        except Exception:
-            idx = None
+        # PostProcessTab should show topics from prompts/narration roots
+        # (topics that have been processed through narration step)
+        # Fallback to outline root if narration/prompts not available yet
 
         topics: list[str] = []
         debug_lines = []
-        if idx:
-            try:
-                topics = sorted(idx.get('topics', {}).keys())
-                debug_lines.append(f"Loaded narration_index.json with {len(topics)} topics")
-                # keep index available for later population
-                try:
-                    self._narration_index = idx
-                except Exception:
-                    pass
-            except Exception:
-                topics = []
-                debug_lines.append("Failed to parse narration_index.json")
-        else:
-            root = self.narration_root()
-            debug_lines.append(f"Using narration_root: {root}")
-            try:
-                entries = []
+
+        # Try narration root first (most likely to have processed topics)
+        root = self.narration_root()
+        debug_lines.append(f"Scanning narration_root: {root}")
+        try:
+            if os.path.isdir(root):
                 for name in os.listdir(root):
                     full = os.path.join(root, name)
-                    entries.append(name)
-                    if os.path.isdir(full):
+                    if os.path.isdir(full) and not name.startswith('.'):
                         topics.append(name)
-                debug_lines.append(f"narration_root exists: {os.path.isdir(root)}, entries_count: {len(entries)}")
-            except Exception as e:
-                self.log.append("stderr", f"Nelze načíst témata z {root}: {e}")
-                debug_lines.append(f"listing error: {e}")
-                topics = []
-            topics.sort()
+                debug_lines.append(f"Found {len(topics)} topics in narration root")
+        except Exception as e:
+            debug_lines.append(f"Error scanning narration root: {e}")
 
-        # write debug info to disk for easier inspection
+        # Fallback to prompts root if narration is empty
+        if not topics:
+            root = self.prompts_root()
+            debug_lines.append(f"Fallback: scanning prompts_root: {root}")
+            try:
+                if os.path.isdir(root):
+                    for name in os.listdir(root):
+                        full = os.path.join(root, name)
+                        if os.path.isdir(full) and not name.startswith('.'):
+                            topics.append(name)
+                    debug_lines.append(f"Found {len(topics)} topics in prompts root")
+            except Exception as e:
+                debug_lines.append(f"Error scanning prompts root: {e}")
+
+        # Final fallback to outline root
+        if not topics:
+            root = self.osnova_root()
+            debug_lines.append(f"Final fallback: scanning outline_root: {root}")
+            try:
+                if os.path.isdir(root):
+                    for name in os.listdir(root):
+                        full = os.path.join(root, name)
+                        if os.path.isdir(full) and not name.startswith('.'):
+                            topics.append(name)
+                    debug_lines.append(f"Found {len(topics)} topics in outline root")
+            except Exception as e:
+                debug_lines.append(f"Error scanning outline root: {e}")
+
+        topics.sort()
+
+        # Log to UI
         try:
-            tmpd = os.path.join('studio_gui', '.tmp')
-            os.makedirs(tmpd, exist_ok=True)
-            dbg_path = os.path.join(tmpd, 'narration_debug.log')
-            from datetime import timezone
-            with open(dbg_path, 'a', encoding='utf-8') as df:
-                df.write(f"--- refresh_topics at {datetime.now(timezone.utc).isoformat()}\n")
-                for ln in debug_lines:
-                    df.write(ln + "\n")
+            for line in debug_lines:
+                self.log.append('stdout', f'[PostProcessTab] {line}')
+            self.log.append('stdout', f'[PostProcessTab] Final topics: {topics}')
         except Exception:
             pass
 
@@ -2352,6 +2358,15 @@ class PostProcessTab(QWidget):
     def apply_current(self) -> None:
         pass
 
+    def on_finished(self, code: int) -> None:
+        self.log.append('stdout', f'Process finished with exit code {code}')
+        self.btn_run_episode_merged.setEnabled(True)
+        if self.thread:
+            self.thread.quit()
+            self.thread.wait()
+            self.thread = None
+            self.worker = None
+
     def run_episode(self) -> None:
         pass
 
@@ -2362,16 +2377,183 @@ class PostProcessTab(QWidget):
         pass
 
     def run_episode_merged(self) -> None:
-        pass
+        """Run historical_processor in episode mode (merged output with intro/transitions)."""
+        items = self.lst_episodes.selectedItems()
+        if not items:
+            self.log.append('stderr', 'Vyberte epizodu ze seznamu.')
+            return
+
+        ep = items[0].text()
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+
+        if not topic or not lang:
+            self.log.append('stderr', 'Topic nebo Language není nastaven')
+            return
+
+        # Build input directory path
+        input_dir = os.path.join(self._resolve_topic_dir(self.narration_root(), topic), lang, ep)
+        if not os.path.isdir(input_dir):
+            self.log.append('stderr', f'Input directory neexistuje: {input_dir}')
+            return
+
+                # Build command - run as module to ensure proper imports
+        runner_module = 'historical_processor.runner_cli'
+        runner_path = os.path.join('historical_processor', 'runner_cli.py')
+        if not os.path.isfile(runner_path):
+            self.log.append('stderr', f'Nenalezen runner: {runner_path}')
+            return
+
+        # Build output directory path
+        output_dir = os.path.join(self.postproc_root(), topic, lang, ep)
+
+        cmd = [sys.executable, '-m', runner_module, '--input-dir', input_dir, '--output-dir', output_dir, '--episode-mode']
+
+        # Add options from checkboxes
+        if self.chk_use_gpt.isChecked():
+            cmd.append('--use-gpt')
+        if self.chk_prefer_existing.isChecked():
+            cmd.append('--prefer-existing')
+        else:
+            cmd.append('--no-prefer-existing')
+        if self.chk_force_rebuild.isChecked():
+            cmd.append('--force-rebuild')
+        if self.chk_save_merged.isChecked():
+            cmd.append('--save-merged')
+        else:
+            cmd.append('--no-save-merged')
+
+        # Add preset
+        preset = self.cmb_preset.currentText()
+        cmd.extend(['--preset', preset])
+
+        # Add rules if specified
+        rules = self.ed_rules.text().strip()
+        if rules and os.path.isfile(rules):
+            cmd.extend(['--rules', rules])
+
+        # Add concurrency
+        cmd.extend(['--concurrency', str(self.spn_concurrency.value())])
+
+        # Environment
+        env = os.environ.copy()
+        env['PYTHONIOENCODING'] = 'utf-8'
+
+        # Ensure NC_OUTPUTS_ROOT is set
+        nc_root = os.environ.get('NC_OUTPUTS_ROOT')
+        if not nc_root:
+            nc_root = str(Path(self.narration_root()).parent)
+            env['NC_OUTPUTS_ROOT'] = nc_root
+
+        # Set explicit output roots for historical_processor
+        env['NARRATION_OUTPUT_ROOT'] = self.narration_root()
+        env['POSTPROC_OUTPUT_ROOT'] = self.postproc_root()
+
+        self.log.append('stdout', f'NC_OUTPUTS_ROOT={nc_root}')
+        self.log.append('stdout', f'POSTPROC_OUTPUT_ROOT={self.postproc_root()}')
+        self.log.append('stdout', f'Running: {" ".join(cmd)}')
+
+        # Launch with cwd set to project root (so historical_processor module can be imported)
+        cwd = os.getcwd()  # project root
+        self.thread, self.worker = _start_qprocess(cmd, env, self, self.log.append, self.on_finished, cwd=cwd)
+        self.btn_run_episode_merged.setEnabled(False)
 
     def open_output_folder(self) -> None:
-        pass
+        """Otevře output složku postprocessingu pro vybranou epizodu."""
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+        items = self.lst_episodes.selectedItems()
+
+        if items and topic and lang:
+            ep = items[0].text()
+            path = Path(self.postproc_root()) / topic / lang / ep
+        elif topic and lang:
+            path = Path(self.postproc_root()) / topic / lang
+        else:
+            path = Path(self.postproc_root())
+
+        if not path.exists():
+            QMessageBox.warning(
+                self,
+                "Složka nenalezena",
+                f"Output složka neexistuje:\n{path}\n\nSpusť nejprve zpracování epizody."
+            )
+            return
+
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(str(path))
+            elif sys.platform == 'darwin':
+                import subprocess
+                subprocess.Popen(['open', str(path)])
+            else:
+                import subprocess
+                subprocess.Popen(['xdg-open', str(path)])
+            self.log.append('stdout', f'Opened folder: {path}')
+        except Exception as e:
+            self.log.append('stderr', f'Cannot open folder: {e}')
 
     def open_merged_file(self) -> None:
-        pass
+        """Otevře episode_merged.txt pro vybranou epizodu."""
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+        items = self.lst_episodes.selectedItems()
+
+        if not items or not topic or not lang:
+            self.log.append('stderr', 'Vyberte epizodu')
+            return
+
+        ep = items[0].text()
+        merged_file = Path(self.postproc_root()) / topic / lang / ep / 'episode_merged.txt'
+
+        if not merged_file.exists():
+            QMessageBox.warning(
+                self,
+                "Soubor nenalezen",
+                f"Merged soubor neexistuje:\n{merged_file}\n\nSpusť nejprve 'Run episode (merged)'."
+            )
+            return
+
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(str(merged_file))
+            else:
+                import subprocess
+                subprocess.Popen(['xdg-open', str(merged_file)])
+            self.log.append('stdout', f'Opened file: {merged_file}')
+        except Exception as e:
+            self.log.append('stderr', f'Cannot open file: {e}')
 
     def open_manifest(self) -> None:
-        pass
+        """Otevře manifest.json pro vybranou epizodu."""
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+        items = self.lst_episodes.selectedItems()
+
+        if not items or not topic or not lang:
+            self.log.append('stderr', 'Vyberte epizodu')
+            return
+
+        ep = items[0].text()
+        manifest_file = Path(self.postproc_root()) / topic / lang / ep / 'manifest.json'
+
+        if not manifest_file.exists():
+            QMessageBox.warning(
+                self,
+                "Soubor nenalezen",
+                f"Manifest neexistuje:\n{manifest_file}\n\nSpusť nejprve 'Run episode (merged)'."
+            )
+            return
+
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(str(manifest_file))
+            else:
+                import subprocess
+                subprocess.Popen(['xdg-open', str(manifest_file)])
+            self.log.append('stdout', f'Opened file: {manifest_file}')
+        except Exception as e:
+            self.log.append('stderr', f'Cannot open file: {e}')
 
 
 class MainWindow(QMainWindow):

@@ -48,4 +48,5 @@ class FormatterConfig:
     quotes_style: str = "auto"  # auto per language
     # soft mode settings
     strict_sentence_split: bool = False  # False = warn only, True = auto-split
-    max_sentence_words: int = 30  # threshold for warning/splitting
+    max_sentence_words: int = 40  # threshold for warning/splitting (20-40 slov recommended)
+    min_sentence_words: int = 20  # minimum words per sentence (for warnings)

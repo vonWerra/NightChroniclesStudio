@@ -210,23 +210,25 @@ class TextFormatter:
         sentences = re.split(r"(?<=[.!?…])\s+", text)
         out = []
         max_words = self.cfg.max_sentence_words
+        min_words = getattr(self.cfg, 'min_sentence_words', 20)  # Default 20 if not set
 
         for i, s in enumerate(sentences, 1):
             words = s.split()
             word_count = len(words)
 
-            if word_count <= max_words:
-                out.append(s)
-                continue
+            # Check if within range (20-40 words)
+            if word_count < min_words:
+                self.warnings.append(f"sentence_{i}_too_short_{word_count}_words_minimum_{min_words}")
+            elif word_count > max_words:
+                if self.cfg.strict_sentence_split:
+                    # Auto-split
+                    out.extend(self._intelligent_split(words, max_words))
+                    continue
+                else:
+                    # Soft mode: warn only
+                    self.warnings.append(f"sentence_{i}_exceeds_{word_count}_words_maximum_{max_words}")
 
-            # Sentence exceeds max_words
-            if self.cfg.strict_sentence_split:
-                # Auto-split
-                out.extend(self._intelligent_split(words, max_words))
-            else:
-                # Soft mode: warn only, preserve original
-                self.warnings.append(f"sentence_{i}_exceeds_{word_count}_words")
-                out.append(s)
+            out.append(s)
 
         return " ".join(out)
 
@@ -234,7 +236,7 @@ class TextFormatter:
         """Legacy method - now delegates to _validate_and_split_sentences."""
         return self._validate_and_split_sentences(text)
 
-    def _intelligent_split(self, words: List[str], max_words: int = 30) -> List[str]:
+    def _intelligent_split(self, words: List[str], max_words: int = 40) -> List[str]:
         """Split long sentences at natural breaks (comma, conjunction)."""
         n = len(words)
         if n <= max_words:
@@ -309,7 +311,7 @@ class TextFormatter:
         prompt = (
             f"You are a professional {lang_full} text editor for documentary narration.\n"
             "Rules:\n"
-            "1) Split only sentences longer than ~30 words into 2 shorter sentences; keep meaning.\n"
+            "1) Split only sentences longer than 40 words into 2 shorter sentences; keep meaning.\n"
             "2) Fix only obvious grammar/spelling/punctuation errors conservatively.\n"
             "3) Keep documentary, neutral, objective third-person tone.\n"
             "4) Do not add or remove factual content.\n"

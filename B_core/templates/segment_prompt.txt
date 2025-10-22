@@ -33,8 +33,8 @@ CRITICAL STYLE REQUIREMENTS (MUST FOLLOW)
   * Spanish: "nuestro", "nuestra", "nuestros"
   * French: "notre", "nos"
 - Refer to the series by name: "the documentary series X" or "the series X" NOT "our series"
-- Each sentence MUST be 15-30 words maximum
-- If a sentence would naturally exceed 30 words, split it at a comma, semicolon, or conjunction
+- Each sentence MUST be 20-40 words (neither too short nor too long)
+- Aim for substantial, flowing sentences that maintain engagement
 - Be engaging but maintain objective, documentary tone
 - Avoid phrases like "we will see", "we will explore", "let us examine"
 

@@ -59,12 +59,12 @@ class TransitionQualityValidator:
     """Validate that a transition is smooth, logical, and non-meta.
 
     Rules:
-    - 1–2 sentences
+    - 7–13 sentences (substantial transitions)
     - avoid meta phrases (per language)
     - include at least one anchor (if anchors exist in prev/next): year/entity/keyword overlap
     - avoid copying long spans from prev/next (>50% token overlap)
     - no possessive pronouns
-    - sentences should be 14-28 words
+    - sentences should be 20-40 words each
     """
 
     SENT_SPLIT = re.compile(r"(?<=[.!?])\s+")
@@ -78,12 +78,14 @@ class TransitionQualityValidator:
     def validate(self, prev: str, next_: str, transition: str) -> ValidationResult:
         reasons: List[str] = []
 
-        # 1) sentence count 1–2
+        # 1) sentence count 7–13
         sentences = self._split_sentences(transition)
         if len(sentences) == 0:
             reasons.append("empty_transition")
-        if len(sentences) > 2:
-            reasons.append("too_many_sentences")
+        if len(sentences) < 7:
+            reasons.append(f"too_few_sentences_{len(sentences)}_minimum_7")
+        if len(sentences) > 13:
+            reasons.append(f"too_many_sentences_{len(sentences)}_maximum_13")
 
         low = transition.strip().lower()
         # 2) meta phrases
@@ -113,13 +115,13 @@ class TransitionQualityValidator:
                 reasons.append("contains_possessive_pronoun")
                 break
 
-        # 🆕 6) Check sentence length (14-28 words per sentence)
+        # 🆕 6) Check sentence length (20-40 words per sentence)
         for i, sent in enumerate(sentences, 1):
             word_count = len(sent.split())
-            if word_count < 14:
-                reasons.append(f"sentence_{i}_too_short_{word_count}_words")
-            elif word_count > 28:
-                reasons.append(f"sentence_{i}_too_long_{word_count}_words")
+            if word_count < 20:
+                reasons.append(f"sentence_{i}_too_short_{word_count}_words_minimum_20")
+            elif word_count > 40:
+                reasons.append(f"sentence_{i}_too_long_{word_count}_words_maximum_40")
 
         return ValidationResult(ok=len(reasons) == 0, reasons=reasons)
 
@@ -163,7 +165,7 @@ class SegmentQualityValidator:
         self.possessive_patterns = POSSESSIVE_PATTERNS.get(self.lang, POSSESSIVE_PATTERNS["EN"])
         self.meta_phrases = [p.lower() for p in META_PHRASES.get(self.lang, META_PHRASES["EN"])]
 
-    def validate(self, text: str, max_sentence_words: int = 30) -> ValidationResult:
+    def validate(self, text: str, min_sentence_words: int = 20, max_sentence_words: int = 40) -> ValidationResult:
         reasons: List[str] = []
 
         # 1) Check for possessive pronouns
@@ -172,12 +174,14 @@ class SegmentQualityValidator:
                 reasons.append("contains_possessive_pronoun")
                 break
 
-        # 2) Check sentence length
+        # 2) Check sentence length (20-40 words)
         sentences = re.split(r"(?<=[.!?])\s+", text.strip())
         for i, sent in enumerate(sentences, 1):
             word_count = len(sent.split())
-            if word_count > max_sentence_words:
-                reasons.append(f"sentence_{i}_exceeds_{word_count}_words")
+            if word_count < min_sentence_words:
+                reasons.append(f"sentence_{i}_too_short_{word_count}_words_minimum_{min_sentence_words}")
+            elif word_count > max_sentence_words:
+                reasons.append(f"sentence_{i}_exceeds_{word_count}_words_maximum_{max_sentence_words}")
 
         # 3) Check for meta-narrative phrases
         low = text.lower()
