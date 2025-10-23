@@ -380,7 +380,19 @@ async def process_episode_dir(
     from historical_processor.narration_core.types import EpisodeContext, GeneratorConfig, FormatterConfig
     from historical_processor.narration_core.validator import TransitionQualityValidator
 
-    topic, lang, ep, ep_index = _derive_episode_context_from_path(in_dir)
+    # CRITICAL FIX: If in_dir is inside postprocess folder (which might have duplicates),
+    # try to find the corresponding narration folder instead
+    actual_input = in_dir
+    if "postprocess" in str(in_dir).lower():
+        # Try to find narration root with same topic/lang/ep
+        topic_guess, lang_guess, ep_guess, _ = _derive_episode_context_from_path(in_dir)
+        narration_root = Path(os.environ.get("NC_OUTPUTS_ROOT", "outputs")) / "narration"
+        narration_candidate = narration_root / topic_guess / lang_guess / ep_guess
+        if narration_candidate.exists():
+            LOGGER.info(json.dumps({"event": "using_narration_input", "original": str(in_dir), "actual": str(narration_candidate)}))
+            actual_input = narration_candidate
+
+    topic, lang, ep, ep_index = _derive_episode_context_from_path(actual_input)
 
     out_dir = out_base / topic / lang / ep
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -412,8 +424,8 @@ async def process_episode_dir(
             LOGGER.info(json.dumps({"event": "reused_merged", "file": str(merged_path)}))
             return {"ok": True, "reused": str(merged_path)}
 
-    # read segments
-    seg_files = _collect_txt_files(in_dir)
+    # read segments from actual_input (not original in_dir if it was postprocess)
+    seg_files = _collect_txt_files(actual_input)
     if not seg_files:
         LOGGER.error(json.dumps({"event": "error", "error": "no_segments"}))
         return {"ok": False, "error": "no_segments"}
