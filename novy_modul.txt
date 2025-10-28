@@ -1,0 +1,168 @@
+Níže máš hotový návrh modulu narrationbuilder.
+Je to univerzální prompt + struktura vstupu/výstupu, kterou můžeš použít ve svém pipeline po fázi segment_01..05.
+Cíl: dostat plnohodnotný publikovatelný scénář / článek, ne pouhý merge.
+
+Rozdělím to na 4 části:
+
+Vysvětlení architektury kroku (kam to patří v procesu)
+
+YAML/JSON konfigurace (co do toho leješ z kódu)
+
+System prompt (instrukce pro model)
+
+Požadovaný výstup (co zpátky čekáš a dál uložíš)
+
+================================================================
+
+ARCHITEKTURA KROKU
+================================================================
+
+Tvoje současná pipeline (zjednodušeně):
+
+outline-generator → vytvoří osnovu epizod (MSP, časové značky, zdroje)
+
+segment-writer → pro každé MSP napíše dlouhý historický blok (to jsou segment_01.txt … segment_05.txt)
+
+(chybějící krok) ❗
+
+TTS / publikace
+
+Ten chybějící krok je právě narrationbuilder. Jeho úloha:
+
+Vezmi všechny segmenty té jedné epizody.
+
+Slouč fakta do lineární dějové linie.
+
+Odstraň duplicity (pokud stejná událost zaznívala víckrát).
+
+Doplň přechody mezi tématy, aby se text četl jako příběh, ne jako oddělené eseje.
+
+Zachovej historickou přesnost, žádné výmysly.
+
+Výsledek vrať jako JEDEN souvislý text s odstavci, který se dá:
+
+vložit na web jako článek,
+
+nebo přečíst jako voiceover,
+
+nebo dát do TTS.
+
+================================================================
+2. YAML / JSON VSTUPNÍ KONFIGURACE
+
+Toto si můžeš nechat generovat automaticky ve skriptu narrationbuilder.py.
+Obsahuje metadata epizody a raw segmenty.
+
+Příklad ve formátu YAML (můžeš si to v kódu převést na JSON, pokud chceš):
+
+episode_meta:
+  series_title: "Vznik Československa: Cesta k samostatnosti"
+  episode_title: "Epizoda 1 – Předválečné prostředí a cesta k odporu"
+  target_language: "CS"
+  target_style: "historicko-dokumentární, klidné tempo, čitelné i pro laika"
+  desired_length_words: 1800-2200
+  sentence_length_target: "20-30 slov"
+
+facts_and_constraints:
+  must_keep_chronology: true
+  no_fiction: true
+  no_dialogue: true
+  no_reenactment: true
+  keep_roles_explicit: true   # Masaryk, Beneš, Štefánik, legie atd.
+  unify_duplicate_events: true
+  allowed_narrative_tone: "vyprávění historie, ne učebnice, ne propaganda"
+
+segments:
+  - name: "segment_01"
+    text: |
+      [sem vlož obsah segment_01.txt]
+  - name: "segment_02"
+    text: |
+      [sem vlož obsah segment_02.txt]
+  - name: "segment_03"
+    text: |
+      [sem vlož obsah segment_03.txt]
+  - name: "segment_04"
+    text: |
+      [sem vlož obsah segment_04.txt]
+  - name: "segment_05"
+    text: |
+      [sem vlož obsah segment_05.txt]
+
+================================================================
+3. SYSTEM PROMPT PRO MODEL
+
+Toto je jádro. Tohle pošleš jako "system" nebo "instruction" zprávu modelu při generování finální epizody.
+
+Jsi historik a scenárista dokumentárního vyprávění.
+
+ÚKOL:
+Z předaných segmentů vytvoř jeden souvislý narativní text epizody v cílovém jazyce.
+
+CÍL:
+- Výsledek musí být čitelný jako samostatný článek NEBO jako voiceover skript.
+- Text musí mít rozsah ~1800–2200 slov.
+- Styl: historicko-dokumentární, srozumitelný pro běžného vzdělaného posluchače/čtenáře.
+- Věty mají být převážně dlouhé 20–30 slov. Kratší věty můžeš občas použít pro důraz.
+- Zachovej chronologii. Nepřeskakuj dopředu a zpátky bez přechodu.
+- Přidej přirozené přechody mezi bloky („Mezitím…“, „Současně…“, „Tento vývoj měl důsledek, že…“).
+- Nepoužívej fiktivní dialogy, vnitřní myšlenky postav nebo dramatizované scény.
+- Nepoužívej marketingové fráze typu „Podívejme se nyní…“, „V tomto díle uvidíte…“, „Jak uvidíme později…“.
+- Zákaz klišé typu „byla to doba velkých změn“ bez faktického obsahu.
+
+DUPLICITY A KONSOLIDACE:
+- Pokud více segmentů popisuje stejnou událost (například vznik České národní rady, Masarykův exil, československé legie, domácí odboj Maffie), spoj je do JEDNOHO kompaktního odstavce.
+- Zdroje informací slučuj, neopakuj stejné vysvětlení dvakrát.
+- Uveď Masaryk–Beneš–Štefánik jen tam, kde to patří logicky; neopakuj jejich role v každém odstavci.
+- Vysvětli význam legií jednou souvisle: vznik, kde bojovaly, proč byly důležité pro uznání československé věci.
+
+TÓN A SLOVNÍK:
+- Piš neutrálně a přesně, ne pateticky.
+- Nepoužívej oslovení diváka / čtenáře („uvidíme“, „dozvíme se“, „pojďme“).
+- Působ soběstačně: text se má číst jako hotový historický výklad.
+
+STRUKTURA:
+1. Úvodní odstavec až dva: nastavení scény před rokem 1914 (postavení Čechů a Slováků v monarchii).
+2. Vypuknutí války a proměna loajality → represe, Maffie, domácí odboj.
+3. Zahraniční rozměr odboje → Masaryk, Beneš, Štefánik, vznik České národní rady, diplomacie.
+4. Vojenský rozměr → legie jako důkaz, že národ skutečně bojuje za vlastní stát.
+5. Společenské dopady války doma → hlad, represe, rostoucí touha po samostatnosti, sbližování Čechů a Slováků.
+6. Přiblížení konce války a příprava na rok 1918 (ale nepopisuj samotné vyhlášení státu do detailu; to patří do epizody 2).
+7. Závěrečný odstavec: shrň, proč se myšlenka samostatného československého státu stala realistickou.
+
+VÝSTUP:
+- Vrať pouze výsledný text epizody, rozdělený do odstavců po 4–6 větách.
+- Nepřidávej bullet pointy, časové kódy, nadpisy segmentů ani poznámky typu „Segment 1 říká…“.
+- Neupravuj fakta, nevymýšlej události, nezaváděj alternativní dějiny.
+
+================================================================
+4. OČEKÁVANÝ VÝSTUP A DALŠÍ KROK
+
+Model ti má vrátit JEDEN velký blok textu (10–15 odstavců).
+Ten uložíš jako např.:
+
+outputs/narration/episode_01_narrative.txt
+
+a potom:
+
+tenhle .txt = vstup pro TTS (ElevenLabs),
+
+tenhle .txt = vstup pro generování obrázků (každý odstavec → vizuální prompt do MidJourney),
+
+tenhle .txt = publikovatelná verze článku (když k tomu přidáš perex a mezititulky).
+
+Důležité: od téhle chvíle už není potřeba, aby publikum znalo MSP nebo zdroje. Citace a přesné zdroje už v téhle fázi nejsou povinné, protože cíl je narativ, ne akademická bibliografie. Tu si držíš ve fázi outline/segment kvůli auditovatelnosti.
+
+================================================================
+→ Shrnutí pro tebe
+
+To, co jsi teď viděl jako „Narrative Synthesis“ (epizoda vyprávěná plynule), NELZE získat prostým mergem segmentů.
+
+Musí existovat samostatný krok s jiným promptem, jiným stylem a jiným cílem.
+
+Ten krok má jasnou vstupní strukturu (YAML), jasný system prompt (viz výše), jasná pravidla výstupu.
+
+Jakmile tohle jednou zadrátuješ, tvůj proces nebude končit u „5 segmentů“, ale u „hotového voiceoveru / článku“.
+To řeší problém, proč doteď dostáváš krátký, osekaný text místo plnohodnotného scénáře.
+
+Toto můžeš teď vzít a rovnou implementovat jako další modul.
