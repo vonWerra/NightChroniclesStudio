@@ -226,7 +226,7 @@ class ProjectTab(QWidget):
 
         def _worker():
             try:
-                from .fs_index import discover_prompts_root, scan_prompts_root, discover_narration_root, scan_narration_root, save_index
+                from .fs_index import discover_prompts_root, scan_prompts_root, discover_narration_root, scan_narration_root, discover_final_root, scan_final_root, save_index
                 tmp_dir = os.path.join('studio_gui', '.tmp')
                 os.makedirs(tmp_dir, exist_ok=True)
 
@@ -249,6 +249,16 @@ class ProjectTab(QWidget):
                     self.log.append('stdout', f'Narration index saved: {os.path.join(tmp_dir, "narration_index.json")}')
                 except Exception as e:
                     self.log.append('stderr', f'Error scanning narration: {e}')
+
+                # Final
+                try:
+                    fr = discover_final_root()
+                    self.log.append('stdout', f'Rescanning final root: {fr}')
+                    findex = scan_final_root(fr, stop_event=stop_event, progress_callback=_progress_cb)
+                    save_index(os.path.join(tmp_dir, 'final_index.json'), findex)
+                    self.log.append('stdout', f'Final index saved: {os.path.join(tmp_dir, "final_index.json")}')
+                except Exception as e:
+                    self.log.append('stderr', f'Error scanning final: {e}')
 
                 # Postprocess scanning could be added similarly
                 success = True
@@ -2556,6 +2566,230 @@ class PostProcessTab(QWidget):
             self.log.append('stderr', f'Cannot open file: {e}')
 
 
+class FinalTab(QWidget):
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self.thread: Optional[QThread] = None
+        self.worker: Optional[SubprocessController] = None
+        self.settings = QSettings()
+
+        v = QVBoxLayout(self)
+
+        # Topic + Language + Episode selection
+        row = QHBoxLayout()
+        self.cmb_topic = QComboBox(self)
+        self.btn_refresh = QPushButton("Refresh", self)
+        self.btn_refresh.clicked.connect(self.refresh_topics)
+        row.addWidget(QLabel("Topic:", self))
+        row.addWidget(self.cmb_topic, 1)
+        row.addWidget(self.btn_refresh)
+        v.addLayout(row)
+
+        row2 = QHBoxLayout()
+        self.cmb_lang = QComboBox(self)
+        row2.addWidget(QLabel("Language:", self))
+        row2.addWidget(self.cmb_lang)
+        v.addLayout(row2)
+
+        row3 = QHBoxLayout()
+        self.cmb_episode = QComboBox(self)
+        row3.addWidget(QLabel("Episode:", self))
+        row3.addWidget(self.cmb_episode)
+        v.addLayout(row3)
+
+        # Params
+        form = QFormLayout()
+        self.ed_model = QLineEdit(self)
+        self.ed_model.setPlaceholderText("gpt-5")
+        self.ed_style = QLineEdit("historicko-dokumentární, klidné tempo, čitelné i pro laika", self)
+        self.ed_len = QLineEdit("1800-2200", self)
+        self.ed_sent = QLineEdit("20-30 slov", self)
+        self.ds_temp = QDoubleSpinBox(self)
+        self.ds_temp.setRange(0.0, 2.0)
+        self.ds_temp.setValue(float(os.environ.get("GPT_TEMPERATURE", "0.4")))
+        form.addRow("Model:", self.ed_model)
+        form.addRow("Style:", self.ed_style)
+        form.addRow("Length words:", self.ed_len)
+        form.addRow("Sentence len:", self.ed_sent)
+        form.addRow("Temperature:", self.ds_temp)
+        v.addLayout(form)
+
+        # Controls
+        controls = QHBoxLayout()
+        self.btn_run = QPushButton("Run Final (narrationbuilder)", self)
+        self.btn_run.clicked.connect(self.run_final)
+        controls.addWidget(self.btn_run)
+        self.btn_open = QPushButton("Open output folder", self)
+        self.btn_open.clicked.connect(self.open_output_folder)
+        controls.addWidget(self.btn_open)
+        self.lbl_pid = QLabel("", self)
+        controls.addWidget(self.lbl_pid)
+        v.addLayout(controls)
+
+        # Logs
+        self.log = LogPane()
+        v.addWidget(self.log)
+
+        self.cmb_topic.currentTextChanged.connect(self.on_topic_changed)
+        self.cmb_lang.currentTextChanged.connect(self.populate_episodes)
+        self.refresh_topics()
+
+    def final_root(self) -> str:
+        return str(PathResolver.final_root())
+
+    def narration_root(self) -> str:
+        return str(PathResolver.narration_root())
+
+    def refresh_topics(self) -> None:
+        # list topics from narration root (since Final consumes narration outputs)
+        topics: list[str] = []
+        root = self.narration_root()
+        try:
+            for name in os.listdir(root):
+                if os.path.isdir(os.path.join(root, name)) and not name.startswith('.'):
+                    topics.append(name)
+        except Exception as e:
+            self.log.append('stderr', f'Cannot list topics in {root}: {e}')
+        topics.sort()
+        cur = self.cmb_topic.currentText()
+        self.cmb_topic.blockSignals(True)
+        self.cmb_topic.clear()
+        self.cmb_topic.addItems(topics)
+        self.cmb_topic.blockSignals(False)
+        if cur and cur in topics:
+            self.cmb_topic.setCurrentText(cur)
+        elif topics:
+            self.cmb_topic.setCurrentIndex(0)
+        # trigger population
+        self.on_topic_changed(self.cmb_topic.currentText())
+
+    def on_topic_changed(self, topic: str) -> None:
+        self.cmb_lang.clear()
+        if not topic:
+            return
+        base = os.path.join(self.narration_root(), topic)
+        langs = []
+        try:
+            for name in os.listdir(base):
+                if os.path.isdir(os.path.join(base, name)) and name.upper() in {"CS","EN","DE","ES","FR"}:
+                    langs.append(name.upper())
+        except Exception:
+            pass
+        langs = sorted(set(langs))
+        self.cmb_lang.addItems(langs)
+        if langs:
+            self.cmb_lang.setCurrentIndex(0)
+        self.populate_episodes()
+
+    def populate_episodes(self) -> None:
+        self.cmb_episode.clear()
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+        if not topic or not lang:
+            return
+        base = os.path.join(self.narration_root(), topic, lang)
+        eps = []
+        try:
+            for name in os.listdir(base):
+                if os.path.isdir(os.path.join(base, name)) and name.lower().startswith('ep'):
+                    eps.append(name)
+        except Exception:
+            pass
+        eps.sort()
+        self.cmb_episode.addItems(eps)
+        if eps:
+            self.cmb_episode.setCurrentIndex(0)
+
+    def _update_pid_label(self) -> None:
+        try:
+            if self.worker and hasattr(self.worker, 'pid'):
+                pid = self.worker.pid()
+                if pid:
+                    self.lbl_pid.setText(f"PID: {pid}")
+                else:
+                    self.lbl_pid.setText("")
+        except Exception:
+            self.lbl_pid.setText("")
+
+    def run_final(self) -> None:
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+        ep = self.cmb_episode.currentText().strip()
+        if not topic or not lang or not ep:
+            self.log.append('stderr', 'Vyberte Topic, Language i Episode')
+            return
+        # parse episode id (expects epXX)
+        try:
+            if not ep.lower().startswith('ep'):
+                raise ValueError('Episode folder must start with ep')
+            episode_id = ep[2:]
+            if len(episode_id) != 2:
+                raise ValueError('Episode ID musí být dvoumístné (01..)')
+        except Exception as e:
+            self.log.append('stderr', f'Invalid episode folder: {ep} ({e})')
+            return
+
+        script = os.path.join('modules', 'narrationbuilder', 'narrationbuilder', 'cli.py')
+        if not os.path.isfile(script):
+            self.log.append('stderr', f'Nenalezen CLI: {script}')
+            return
+        # Build command using current Python
+        cmd = [sys.executable, script, '--project-root', os.getcwd(), '--topic-id', topic, '--episode-id', episode_id, '--lang', lang]
+        model = self.ed_model.text().strip() or 'gpt-5'
+        cmd += ['--model', model]
+        cmd += ['--style', self.ed_style.text().strip()]
+        cmd += ['--length-words', self.ed_len.text().strip()]
+        cmd += ['--sentence-len', self.ed_sent.text().strip()]
+
+        env = os.environ.copy()
+        env['PYTHONIOENCODING'] = 'utf-8'
+        if self.ed_model.text().strip():
+            env['GPT_MODEL'] = self.ed_model.text().strip()
+        env['GPT_TEMPERATURE'] = str(self.ds_temp.value())
+
+        self.thread, self.worker = _start_qprocess(cmd, env, self, self.log.append, self.on_finished, cwd=os.getcwd())
+        QTimer.singleShot(250, self._update_pid_label)
+        self.btn_run.setEnabled(False)
+
+    def open_output_folder(self) -> None:
+        topic = self.cmb_topic.currentText().strip()
+        lang = self.cmb_lang.currentText().strip()
+        ep = self.cmb_episode.currentText().strip()
+        base = Path(self.final_root())
+        if topic and lang and ep:
+            path = base / topic / lang / ep
+        elif topic and lang:
+            path = base / topic / lang
+        elif topic:
+            path = base / topic
+        else:
+            path = base
+        if not path.exists():
+            QMessageBox.warning(self, 'Složka nenalezena', f"Output složka neexistuje:\n{path}")
+            return
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(str(path))
+            elif sys.platform == 'darwin':
+                import subprocess
+                subprocess.Popen(['open', str(path)])
+            else:
+                import subprocess
+                subprocess.Popen(['xdg-open', str(path)])
+            self.log.append('stdout', f'Opened folder: {path}')
+        except Exception as e:
+            self.log.append('stderr', f'Cannot open folder: {e}')
+
+    def on_finished(self, code: int) -> None:
+        self.log.append('stdout', f'Process finished with exit code {code}')
+        self.btn_run.setEnabled(True)
+        if self.thread:
+            self.thread.quit()
+            self.thread.wait()
+            self.thread = None
+            self.worker = None
+
+
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
@@ -2568,6 +2802,7 @@ class MainWindow(QMainWindow):
         tabs.addTab(PromptsTab(self), "Prompts")
         tabs.addTab(NarrationTab(self), "Narration")
         tabs.addTab(PostProcessTab(self), "PostProcess")
+        tabs.addTab(FinalTab(self), "Final")
 
         self.setCentralWidget(tabs)
 

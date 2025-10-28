@@ -27,6 +27,7 @@ class PathResolver:
         "prompts": "PROMPTS_OUTPUT_ROOT",
         "narration": "NARRATION_OUTPUT_ROOT",
         "postprocess": "POSTPROC_OUTPUT_ROOT",
+        "final": "FINAL_OUTPUT_ROOT",
         "tts": "TTS_OUTPUT_ROOT",
         "export": "EXPORT_OUTPUT_ROOT",
     }
@@ -36,6 +37,7 @@ class PathResolver:
         "prompts": "prompts",
         "narration": "narration",
         "postprocess": "postprocess",
+        "final": "final",
         "tts": "tts",
         "export": "export",
     }
@@ -114,6 +116,10 @@ class PathResolver:
     @classmethod
     def postproc_root(cls) -> Path:
         return cls.get_root("postprocess")
+
+    @classmethod
+    def final_root(cls) -> Path:
+        return cls.get_root("final")
 
     @classmethod
     def tts_root(cls) -> Path:

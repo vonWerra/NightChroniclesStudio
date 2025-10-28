@@ -8,3 +8,4 @@ keyring
 filelock
 psutil
 structlog
+tenacity>=8.2

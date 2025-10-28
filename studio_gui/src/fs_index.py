@@ -39,6 +39,20 @@ def discover_narration_root() -> str:
     return os.path.join(os.getcwd(), 'outputs', 'narration')
 
 
+def discover_final_root() -> str:
+    """Discover final output root.
+
+    Priority: FINAL_OUTPUT_ROOT > NC_OUTPUTS_ROOT/final > ./outputs/final
+    """
+    fr = os.environ.get('FINAL_OUTPUT_ROOT')
+    if fr:
+        return fr
+    nc = os.environ.get('NC_OUTPUTS_ROOT')
+    if nc:
+        return os.path.join(nc, 'final')
+    return os.path.join(os.getcwd(), 'outputs', 'final')
+
+
 def _safe_scandir(path: Path):
     try:
         with os.scandir(path) as it:
@@ -206,6 +220,54 @@ def scan_narration_root(root: Optional[str] = None, stop_event: Optional[threadi
             progress_callback('narration', pct, f'scanned {tcount}/{total_topics} topics')
     if progress_callback:
         progress_callback('narration', 100, 'narration scan done')
+    return index
+
+
+def scan_final_root(root: Optional[str] = None, stop_event: Optional[threading.Event] = None, progress_callback: Optional[Callable[[str, int, str], None]] = None) -> Dict:
+    """Scan final outputs and return index with final files per episode.
+
+    Expected layout: <root>/<topic>/<LANG>/episode_{ID}/episode_{ID}_final.txt
+    """
+    root = root or discover_final_root()
+    root_p = Path(root)
+    index = {'root': str(root_p), 'scanned_at': time.time(), 'topics': {}}
+    if not root_p.exists():
+        return index
+
+    topics = list_topics(root)
+    total_topics = max(1, len(topics))
+    tcount = 0
+    for topic in topics:
+        if stop_event and stop_event.is_set():
+            if progress_callback:
+                progress_callback('final', 0, 'cancelled')
+            break
+        tpath = root_p / topic
+        index['topics'][topic] = {'languages': {}}
+        langs = list_languages(tpath)
+        for lang in langs:
+            if stop_event and stop_event.is_set():
+                break
+            lpath = tpath / lang
+            index['topics'][topic]['languages'][lang] = {'episodes': {}}
+            for ep in list_episodes(lpath):
+                if stop_event and stop_event.is_set():
+                    break
+                epath = lpath / ep
+                final_txt = None
+                for e in _safe_scandir(epath):
+                    if e.is_file() and e.name.endswith('_final.txt'):
+                        final_txt = str(Path(e.path))
+                        break
+                index['topics'][topic]['languages'][lang]['episodes'][ep] = {
+                    'final_file': final_txt
+                }
+        tcount += 1
+        if progress_callback:
+            pct = int((tcount / total_topics) * 100)
+            progress_callback('final', pct, f'scanned {tcount}/{total_topics} topics')
+    if progress_callback:
+        progress_callback('final', 100, 'final scan done')
     return index
 
 
