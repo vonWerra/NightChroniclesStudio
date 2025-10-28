@@ -11,8 +11,7 @@ Systém pro tvorbu historických YouTube sérií pomocí AI.
 | **outline-generator** | Generování osnov | ✅ Opraveno | GPT-4.1-mini |
 | **B_core** | Generování promptů | ⏳ K opravě | - |
 | **claude_generator** | Narativní texty | ✅ Funkční | Claude Opus |
-| **narration_builder** | Fúze segmentů | ⏳ K revizi | GPT-4 |
-| **historical_processor** | Post-processing | ⏳ K revizi | - |
+| **narration_builder** | Fúze & post-processing | ⏳ K revizi | GPT-4 |
 | **elevenlabs_vystup** | TTS (ElevenLabs) | ⏳ K prozkoumání | - |
 
 ---
@@ -35,7 +34,6 @@ python generate_outline.py -l CS -v
 - [ ] B_core
 - [ ] claude_generator (revize)
 - [ ] narration_builder
-- [ ] historical_processor
 - [ ] elevenlabs_vystup
 
 ### **Fáze 2: Sjednocení**
@@ -59,11 +57,9 @@ python generate_outline.py -l CS -v
    ↓
 3. Claude Generator     → narativní segmenty
    ↓
-4. Narration Builder    → spojené epizody
+4. Narration Builder    → spojené epizody + post-processing
    ↓
-5. Historical Processor → post-processing (zkratky, roky)
-   ↓
-6. ElevenLabs           → MP3 soubory
+5. ElevenLabs           → MP3 soubory
    ↓
 7. Export               → finální balíčky
 ```
