@@ -17,8 +17,9 @@ class ProviderError(Exception):
 
 
 def _get_model() -> str:
-    # default to gpt-5, fallback handled by caller upon error
-    return os.environ.get("GPT_MODEL", "gpt-5")
+    # default to gpt-5.2, fallback handled by caller upon error
+    # Common valid models: gpt-5.2, gpt-4o, gpt-4-turbo, gpt-4
+    return os.environ.get("GPT_MODEL", "gpt-5.2")
 
 
 def _get_temperature() -> float:
@@ -60,19 +61,17 @@ def call_llm(messages: list[dict[str, str]], model: Optional[str] = None) -> Dic
         return client.chat.completions.create(**kwargs)
 
     try:
-        # Heuristic: omit temperature for gpt-5 family by default
-        if str(mdl).lower().startswith('gpt-5'):
-            resp = _create(allow_temp=False)
-        else:
-            try:
-                resp = _create(allow_temp=True)
-            except Exception as e:
-                # retry without temperature if it's an unsupported_value error
-                msg = str(e)
-                if 'unsupported_value' in msg and 'temperature' in msg:
-                    resp = _create(allow_temp=False)
-                else:
-                    raise
+        # Heuristic: some models don't support temperature parameter
+        # Try with temperature first, fallback to without if it fails
+        try:
+            resp = _create(allow_temp=True)
+        except Exception as e:
+            # Retry without temperature if it's an unsupported_value error
+            msg = str(e).lower()
+            if 'unsupported' in msg or 'temperature' in msg or 'parameter' in msg:
+                resp = _create(allow_temp=False)
+            else:
+                raise
     except Exception as e:
         raise ProviderError(str(e))
 

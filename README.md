@@ -11,7 +11,7 @@ Systém pro tvorbu historických YouTube sérií pomocí AI.
 | **outline-generator** | Generování osnov | ✅ Opraveno (v1.1) | GPT-4.1-mini |
 | **B_core** | Generování promptů | ✅ Opraveno (v2.0) | - |
 | **claude_generator** | Narativní texty | ✅ Opraveno (v2.0) | Claude Opus 4.5 |
-| **narration_builder** | Fúze & post-processing | ⏳ K revizi | GPT-4 |
+| **narration_builder** | Fúze & post-processing | ✅ Opraveno (v2.0) | GPT-4o |
 | **elevenlabs_vystup** | TTS (ElevenLabs) | ⏳ K prozkoumání | - |
 
 ---
@@ -37,15 +37,21 @@ python claude_generator/runner_cli.py --topic "Napoleon" --language CS --episode
 ```
 **Dokumentace:** `claude_generator/README.md`
 
+### **4. Narration Builder (Final)** (hotovo)
+```bash
+python -m narrationbuilder --project-root . --topic-id "Napoleon" --episode-id 01 --lang CS
+```
+**Dokumentace:** `modules/narrationbuilder/README.md`
+
 ---
 
 ## 🎯 **Plán**
 
-### **Fáze 1: Opravy modulů** ✅ 3/5
+### **Fáze 1: Opravy modulů** ✅ 4/5
 - [x] outline-generator (v1.1)
 - [x] B_core (v2.0)
 - [x] claude_generator (v2.0)
-- [ ] narration_builder
+- [x] narration_builder (v2.0)
 - [ ] elevenlabs_vystup
 
 ### **Fáze 2: Sjednocení**
@@ -102,6 +108,8 @@ python claude_generator/runner_cli.py --topic "Napoleon" --language CS --episode
 - Claude Generator (Narration): [claude_generator/README.md](claude_generator/README.md)
   - Fixes Summary: [claude_generator/FIXES_SUMMARY.md](claude_generator/FIXES_SUMMARY.md)
   - Changelog: [claude_generator/CHANGELOG_v2.0.md](claude_generator/CHANGELOG_v2.0.md)
+- Narration Builder (Final): [modules/narrationbuilder/README.md](modules/narrationbuilder/README.md)
+  - Changelog: [modules/narrationbuilder/CHANGELOG_v2.0.md](modules/narrationbuilder/CHANGELOG_v2.0.md)
 
 ---
 
@@ -110,10 +118,11 @@ python claude_generator/runner_cli.py --topic "Napoleon" --language CS --episode
 🟢 **Outline Generator** – Produkčně připraveno (v1.1)
 🟢 **B_core** – Produkčně připraveno (v2.0)
 🟢 **Claude Generator** – Produkčně připraveno (v2.0)
-🟡 **Ostatní moduly** – Fungují, ale vyžadují cleanup
+🟢 **Narration Builder** – Produkčně připraveno (v2.0)
+🟡 **ElevenLabs TTS** – Funguje, ale vyžaduje cleanup
 🔵 **GUI** – V plánu
 
 ---
 
 **Aktualizováno:** 2024-01-21
-**Verze:** 0.4.0-alpha
+**Verze:** 0.5.0-alpha

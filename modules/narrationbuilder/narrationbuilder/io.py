@@ -8,20 +8,60 @@ from .config import EpisodeConfig, EpisodeMeta, FactsConstraints, Segment, DEFAU
 
 
 def load_segments(base_segments_dir: Path, episode_id: str) -> List[Segment]:
-    """Load segment_01..05.txt from narration outputs for given episode.
+    """Load all segment_XX.txt files from narration outputs for given episode.
+
+    Dynamically discovers all segment files (not hard-coded to 1-5).
+    Tries multiple encodings for robustness.
 
     base_segments_dir: typically outputs/narration/<topic>/<lang>/epXX
     """
     segs: List[Segment] = []
-    for i in range(1, 6):
-        name = f"segment_{i:02d}.txt"
-        p = base_segments_dir / name
-        if not p.exists():
-            # missing segments are allowed; continue
-            continue
-        text = p.read_text(encoding='utf-8', errors='replace').strip()
-        segs.append(Segment(name=name.removesuffix('.txt'), text=text))
+
+    # Dynamically find all segment_*.txt files
+    segment_files = sorted(base_segments_dir.glob('segment_*.txt'))
+
+    if not segment_files:
+        # Fallback: try numbered segments if glob returns nothing
+        # (for compatibility with older structures)
+        for i in range(1, 20):  # Check up to 20 segments
+            name = f"segment_{i:02d}.txt"
+            p = base_segments_dir / name
+            if p.exists():
+                segment_files.append(p)
+            elif i > 5:
+                # Stop if we've checked beyond 5 and found nothing
+                break
+
+    for p in segment_files:
+        name = p.name.removesuffix('.txt')
+        text = _read_text_robust(p)
+        if text.strip():
+            segs.append(Segment(name=name, text=text.strip()))
+
     return segs
+
+
+def _read_text_robust(path: Path) -> str:
+    """Read text file with multiple encoding fallbacks.
+
+    Tries UTF-8, UTF-8-sig, CP1250, Windows-1250, ISO-8859-2, and finally replace errors.
+    """
+    encodings = ['utf-8', 'utf-8-sig', 'cp1250', 'windows-1250', 'iso-8859-2']
+
+    for encoding in encodings:
+        try:
+            text = path.read_text(encoding=encoding)
+            # Verify it's readable (contains common characters)
+            if any(c in text for c in 'aeiouAEIOU \t\n'):
+                return text
+        except (UnicodeDecodeError, UnicodeError):
+            continue
+
+    # Final fallback: replace errors
+    try:
+        return path.read_text(encoding='utf-8', errors='replace')
+    except Exception:
+        return ""
 
 
 def build_episode_config(series_title: str, episode_title: str, lang: str, segments: List[Segment],

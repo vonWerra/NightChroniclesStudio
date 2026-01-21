@@ -1,0 +1,25 @@
+{
+  "topic": "Boston Tea Party",
+  "lang": "EN",
+  "episode": "01",
+  "timestamp": "2026-01-21T21:47:46.156927",
+  "steps": {
+    "outline": {
+      "skipped": true
+    },
+    "prompts": {
+      "exit_code": 0,
+      "success": true
+    },
+    "narration": {
+      "exit_code": 0,
+      "success": true,
+      "segment_count": 10
+    },
+    "final": {
+      "exit_code": 1,
+      "success": false,
+      "word_count": 3229
+    }
+  }
+}
