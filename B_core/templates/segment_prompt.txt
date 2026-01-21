@@ -47,9 +47,6 @@ TTS-FRIENDLY RULES (ElevenLabs)
 - Output body = one single paragraph; no headings, no bullets, no markup.
 - Use punctuation for natural pauses; avoid parentheses and quotes where possible.
 
-OPTIONAL REFERENCE (DO NOT OUTPUT)
-{CANON_BLOCK}
-
 OUTPUT FORMAT (STRICT)
 Return exactly:
 1) The narration paragraph for this segment (one single paragraph).

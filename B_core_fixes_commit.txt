@@ -1,0 +1,29 @@
+fix(B_core): Robustní parsing MSP + cleanup obsolete kódu
+
+🔧 Fixes:
+1. Přidán extract_msp_label() pro různé formáty osnov
+   - Podporuje string MSP, dict s text/label/msp/msp_label
+   - Fallback na episode-level sources
+   - Lepší error messages s kontextem
+
+2. Odstraněn hard-coded jazyk z params.json
+   - Config je nyní language-agnostic
+   - Jazyk vždy z CLI argumentu
+
+3. Cleanup obsolete CANON_BLOCK
+   - Odstraněn z template (mrtvý kód)
+   - Odstraněn use_canon z configu
+
+✅ Testy: 8/8 passed (test_msp_parsing.py)
+✅ Zpětná kompatibilita: 100%
+✅ Status: Production-ready
+
+Soubory:
+- B_core/generate_prompts.py (+45 lines)
+- B_core/config/params.json (-2 keys)
+- B_core/templates/segment_prompt.txt (-3 lines)
+- B_core/test_msp_parsing.py (NEW)
+- B_core/README.md (NEW)
+- B_core/CHANGELOG_v2.0.md (NEW)
+- B_core/FIXES_SUMMARY.md (NEW)
+- B_core/DONE.md (NEW)

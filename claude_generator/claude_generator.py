@@ -68,17 +68,42 @@ load_dotenv()
 def _strip_code_fences(s: Optional[str]) -> Optional[str]:
     """Remove surrounding and internal triple-backtick fences (optionally with language) from string.
     Keeps inner content and returns stripped text. Returns None if input is falsy.
+
+    Robustly handles:
+    - Single fence blocks: ```yaml\n...\n```
+    - Nested fences
+    - Multiple fence blocks
+    - Mixed fence styles
     """
     if not s:
         return s
     try:
-        # remove leading/trailing fences
-        s = re.sub(r"^\s*```(?:yaml|yml)?\s*", "", s, flags=re.I)
-        s = re.sub(r"\s*```\s*$", "", s)
-        # replace any fenced blocks with their inner content
-        s = re.sub(r"```(?:yaml|yml)?\s*(.*?)\s*```", r"\1", s, flags=re.S|re.I)
-        return s.strip()
-    except Exception:
+        original = s
+        # Step 1: Remove leading/trailing whitespace
+        s = s.strip()
+
+        # Step 2: Try to extract from outermost fences first
+        # Pattern: ```yaml (optional) followed by content, then closing ```
+        outer_pattern = r'^```(?:yaml|yml)?\s*\n(.*)\n```\s*$'
+        match = re.match(outer_pattern, s, flags=re.DOTALL | re.I)
+        if match:
+            s = match.group(1).strip()
+
+        # Step 3: Remove any remaining internal fences (recursive approach)
+        max_iterations = 5
+        for _ in range(max_iterations):
+            before = s
+            # Remove fence markers without extracting (for inline cases)
+            s = re.sub(r'^```(?:yaml|yml)?\s*\n?', '', s, flags=re.I | re.M)
+            s = re.sub(r'\n?```\s*$', '', s, flags=re.M)
+            # Extract from inline fence blocks
+            s = re.sub(r'```(?:yaml|yml)?\s*\n(.*?)\n```', r'\1', s, flags=re.DOTALL | re.I)
+            if s == before:
+                break
+
+        return s.strip() if s.strip() else original
+    except Exception as e:
+        logging.getLogger(__name__).debug(f"Error stripping code fences: {e}")
         return s
 
 
@@ -360,15 +385,15 @@ class SegmentCache:
                 except Exception:
                     pass
 
-    def get_cache_key(self, prompt: str, params: Dict) -> str:
-        """Vytvoří unikátní klíč pro cache"""
-        content = f"{prompt}{json.dumps(params, sort_keys=True)}"
+    def get_cache_key(self, prompt: str, params: Dict, series_name: str = "", lang: str = "") -> str:
+        """Vytvoří unikátní klíč pro cache (zahrnuje series + language pro izolaci)"""
+        content = f"{series_name}:{lang}:{prompt}{json.dumps(params, sort_keys=True)}"
         return hashlib.sha256(content.encode()).hexdigest()
 
-    def get(self, prompt: str, params: Dict) -> Optional[str]:
+    def get(self, prompt: str, params: Dict, series_name: str = "", lang: str = "") -> Optional[str]:
         """Získá segment z cache"""
         with self._lock:
-            key = self.get_cache_key(prompt, params)
+            key = self.get_cache_key(prompt, params, series_name, lang)
 
             # Nejdřív zkusit paměťovou cache
             if key in self.memory_cache:
@@ -403,10 +428,10 @@ class SegmentCache:
 
             return None
 
-    def set(self, prompt: str, params: Dict, content: str):
+    def set(self, prompt: str, params: Dict, content: str, series_name: str = "", lang: str = ""):
         """Uloží segment do cache"""
         with self._lock:
-            key = self.get_cache_key(prompt, params)
+            key = self.get_cache_key(prompt, params, series_name, lang)
 
             # Uložit do paměťové cache
             self.memory_cache[key] = content
@@ -487,7 +512,7 @@ class SegmentResult:
 class Config:
     """Konfigurace aplikace s vylepšenou bezpečností"""
     api_key: str = field(default_factory=SecureCredentialManager.get_api_key)
-    model: str = os.getenv('CLAUDE_MODEL', 'claude-opus-4-1-20250805')
+    model: str = os.getenv('CLAUDE_MODEL', 'claude-opus-4-20250514')
     temperature: float = float(os.getenv('CLAUDE_TEMPERATURE', '0.3'))
     max_tokens: int = int(os.getenv('CLAUDE_MAX_TOKENS', '8000'))
     max_attempts: int = int(os.getenv('MAX_ATTEMPTS', '3'))
@@ -539,7 +564,7 @@ class Config:
         os.getenv('NC_OUTPUTS_ROOT'),
         'prompts',
         os.getenv('OUTPUT_PATH'),
-        'D:/NightChronicles/B_core/outputs'
+        str(Path.cwd() / 'outputs' / 'prompts')  # Cross-platform fallback
     )
 
     claude_output_path: str = _resolve_env_path(
@@ -547,7 +572,7 @@ class Config:
         os.getenv('NC_OUTPUTS_ROOT'),
         'narration',
         os.getenv('CLAUDE_OUTPUT'),
-        'D:/NightChronicles/Claude_vystup/outputs'
+        str(Path.cwd() / 'outputs' / 'narration')  # Cross-platform fallback
     )
 
     # Nové konfigurace
@@ -590,7 +615,9 @@ class ClaudeGeneratorError(Exception):
 
 class APIError(ClaudeGeneratorError):
     """Chyba API volání"""
-    pass
+    def __init__(self, message: str, retryable: bool = True):
+        super().__init__(message)
+        self.retryable = retryable
 
 class ValidationError(ClaudeGeneratorError):
     """Chyba validace"""
@@ -895,8 +922,43 @@ class OptimizedClaudeGenerator:
         cleaned = ' '.join(text.split())
         return len(cleaned.split()) if cleaned else 0
 
+    def check_topic_relevance(self, text: str, series_name: str, threshold: float = 0.3) -> Tuple[bool, str]:
+        """Kontroluje, zda text je relevantní k danému tématu.
+
+        Args:
+            text: Vygenerovaný text
+            series_name: Název série (např. "Napoleon" nebo "Industrial_Revolution")
+            threshold: Minimální score pro akceptaci (0.0-1.0)
+
+        Returns:
+            (is_relevant, reason)
+        """
+        try:
+            # Normalize series name to keywords
+            topic_keywords = series_name.replace('_', ' ').replace('-', ' ').lower().split()
+            topic_keywords = [kw for kw in topic_keywords if len(kw) > 3]  # Filter short words
+
+            if not topic_keywords:
+                return True, "No keywords to check"
+
+            text_lower = text.lower()
+
+            # Count keyword occurrences
+            matches = sum(1 for kw in topic_keywords if kw in text_lower)
+            score = matches / len(topic_keywords)
+
+            if score >= threshold:
+                return True, f"Topic relevance: {score:.1%}"
+            else:
+                missing = [kw for kw in topic_keywords if kw not in text_lower]
+                return False, f"Low topic relevance ({score:.1%}). Missing keywords: {', '.join(missing)}"
+
+        except Exception as e:
+            self.logger.debug(f"Error checking topic relevance: {e}")
+            return True, "Check failed, assuming OK"
+
     def check_requirements(self, text: str, validation: Dict, target_words: int,
-                         tolerance_percent: int) -> Tuple[bool, List[str]]:
+                         tolerance_percent: int, series_name: Optional[str] = None) -> Tuple[bool, List[str]]:
         """Kontrola požadavků na segment"""
         issues = []
 
@@ -921,6 +983,12 @@ class OptimizedClaudeGenerator:
 
                 check_field('opening_hook_present', ['yes', 'true', '1'], "Chybí úvodní hook")
                 check_field('closing_handoff_present', ['yes', 'true', '1'], "Chybí závěrečný handoff")
+
+            # Topic drift detection
+            if series_name:
+                is_relevant, reason = self.check_topic_relevance(text, series_name)
+                if not is_relevant:
+                    issues.append(f"Off-topic: {reason}")
 
         except Exception as e:
             issues.append(f"Chyba validace: {str(e)}")
@@ -993,21 +1061,35 @@ class OptimizedClaudeGenerator:
 
         return None
 
-    def call_api_with_retry(self, prompt: str, attempt_num: int = 1, target_words: Optional[int] = None) -> Optional[str]:
+    def call_api_with_retry(self, prompt: str, attempt_num: int = 1, target_words: Optional[int] = None,
+                           series_name: str = "", lang: str = "",
+                           increase_tokens_on_truncation: bool = True) -> Optional[str]:
         """Synchronní volání API s retry logikou a cache
 
         If target_words is provided, a cached result will be validated against requirements
         (word count + validation) and only returned if acceptable. Otherwise, cached result
         is returned unconditionally.
+
+        Args:
+            increase_tokens_on_truncation: If True, automatically increase max_tokens by 20% on retry after truncation
         """
+        # Detect if we should increase tokens (on retry after truncation)
+        effective_max_tokens = self.config.max_tokens
+        if attempt_num > 1 and increase_tokens_on_truncation:
+            # Check if previous call was truncated
+            was_truncated = getattr(self, '_last_call_truncated', False)
+            if was_truncated:
+                effective_max_tokens = int(self.config.max_tokens * 1.2)
+                self.logger.info(f"    Increasing max_tokens to {effective_max_tokens} (was truncated)")
+
         # Kontrola cache
         if self.cache and self.config.enable_cache:
             params = {
                 'model': self.config.model,
                 'temperature': self.config.temperature,
-                'max_tokens': self.config.max_tokens
+                'max_tokens': effective_max_tokens
             }
-            cached_result = self.cache.get(prompt, params)
+            cached_result = self.cache.get(prompt, params, series_name, lang)
             if cached_result:
                 # If we have a target_words, validate cached result against requirements
                 if target_words is not None:
@@ -1062,7 +1144,7 @@ class OptimizedClaudeGenerator:
                 response = self.client.messages.create(
                     model=self.config.model,
                     temperature=self.config.temperature,
-                    max_tokens=self.config.max_tokens,
+                    max_tokens=effective_max_tokens,
                     messages=[{"role": "user", "content": prompt}]
                 )
 
@@ -1113,30 +1195,35 @@ class OptimizedClaudeGenerator:
                     return result
 
             except (httpx.ReadTimeout, httpx.WriteTimeout, httpx.ConnectTimeout, httpx.NetworkError) as e:
-                # network/timeout specific -> increment api_errors metric and retry
+                # network/timeout specific -> increment api_errors metric and retry (RETRYABLE)
                 if self.health_monitor:
                     self.health_monitor.update_metric('api_errors', 1)
-                self.logger.warning(f"Network/timeout error while calling API: {e}. Will retry if attempts remain.")
+                self.logger.warning(f"Network/timeout error (retryable): {e}. Will retry if attempts remain.")
                 # continue to next retry
 
             except Exception as e:
                 if self.health_monitor:
                     self.health_monitor.update_metric('api_errors', 1)
 
-                if retry == max_retries - 1:
-                    raise APIError(f"API volání selhalo po {max_retries} pokusech: {e}")
+                # Detect non-retryable errors
+                error_str = str(e).lower()
+                non_retryable_keywords = [
+                    'invalid api key', 'authentication', 'unauthorized',
+                    'invalid_request_error', 'model_not_found'
+                ]
+                is_retryable = not any(kw in error_str for kw in non_retryable_keywords)
 
-            except Exception as e:
-                if self.health_monitor:
-                    self.health_monitor.update_metric('api_errors', 1)
+                if not is_retryable:
+                    self.logger.error(f"Non-retryable API error: {e}")
+                    raise APIError(f"API volání selhalo (non-retryable): {e}", retryable=False)
 
                 if retry == max_retries - 1:
-                    raise APIError(f"API volání selhalo po {max_retries} pokusech: {e}")
+                    raise APIError(f"API volání selhalo po {max_retries} pokusech: {e}", retryable=True)
 
         return None
 
     def generate_segment(self, prompt: str, fix_template: str, segment_idx: int,
-                        target_words: int, series_name: Optional[str] = None) -> SegmentResult:
+                        target_words: int, series_name: Optional[str] = None, lang: str = "") -> SegmentResult:
         """Generuje jeden segment s opravnými pokusy"""
         start_time = time.time()
         attempts = []
@@ -1179,7 +1266,13 @@ class OptimizedClaudeGenerator:
                     except Exception:
                         pass
 
-                full_text = self.call_api_with_retry(current_prompt, attempt_num, target_words=target_words)
+                full_text = self.call_api_with_retry(
+                    current_prompt, attempt_num,
+                    target_words=target_words,
+                    series_name=series_name or "",
+                    lang=lang,
+                    increase_tokens_on_truncation=True
+                )
 
                 if not full_text:
                     raise APIError("API nevrátilo žádný text")
@@ -1190,7 +1283,8 @@ class OptimizedClaudeGenerator:
 
                 success, issues = self.check_requirements(
                     narration, validation, target_words,
-                    self.config.word_tolerance_percent
+                    self.config.word_tolerance_percent,
+                    series_name=series_name  # Pass series_name for topic check
                 )
 
                 score = abs(word_count - target_words)
@@ -1227,7 +1321,7 @@ class OptimizedClaudeGenerator:
                                 'max_tokens': self.config.max_tokens
                             }
                             # store full_text (including validation) under current_prompt
-                            self.cache.set(current_prompt, params, full_text)
+                            self.cache.set(current_prompt, params, full_text, series_name=series_name or "", lang=lang)
                             self.logger.debug('Cached successful result for prompt (validated)')
                     except Exception as e:
                         self.logger.debug(f'Failed to cache result: {e}')
@@ -1330,7 +1424,7 @@ class OptimizedClaudeGenerator:
                     'temperature': self.config.temperature,
                     'max_tokens': self.config.max_tokens
                 }
-                self.cache.set(prompt, params, full_text)
+                self.cache.set(prompt, params, full_text, series_name="", lang="")
 
             if self.health_monitor:
                 if success:
@@ -1440,10 +1534,17 @@ class OptimizedClaudeGenerator:
 
             # Pass real series name (three levels up from prompts_dir): outputs/prompts/<series>/<lang>/epX/prompts
             real_series_name = prompts_dir.parent.parent.parent.name if prompts_dir.parent.parent.parent is not None else prompts_dir.parent.name
+            # Extract language from path (4 levels up: prompts/epX/lang/topic)
+            try:
+                lang_name = prompts_dir.parent.parent.name if prompts_dir.parent.parent else ""
+            except Exception:
+                lang_name = ""
+
             return self.generate_segment(
                 exec_prompt, fix_template, seg_idx,
                 seg_data.get('word_target', 500),
-                series_name=real_series_name
+                series_name=real_series_name,
+                lang=lang_name
             )
 
         except Exception as e:

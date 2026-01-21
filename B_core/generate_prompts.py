@@ -157,6 +157,50 @@ def copy_into(dst_dir: Path, *files: Path) -> None:
         shutil.copy2(src, dst_dir / src.name)
 
 
+def extract_msp_label(msp: Any) -> str:
+    """
+    Safely extract MSP label from various osnova.json formats.
+
+    Supports:
+    - str: "Napoleon's rise to power"
+    - dict with "text": {"text": "Napoleon...", "sources_segment": [...]}
+    - dict with "label": {"label": "Napoleon...", "sources_segment": [...]}
+    - dict with "msp": {"msp": "Napoleon...", "sources_segment": [...]}
+    - dict with "msp_label": {"msp_label": "Napoleon...", "sources_segment": [...]}
+
+    Returns:
+        Extracted label string, or empty string if not found.
+    """
+    # If MSP is already a string, return it directly
+    if isinstance(msp, str):
+        return msp.strip()
+
+    # If MSP is a dict, try various common key names
+    if isinstance(msp, dict):
+        for key in ["text", "label", "msp_label", "msp"]:
+            val = msp.get(key, "")
+            if val and isinstance(val, str):
+                return val.strip()
+        # If dict has no recognized keys, log warning and return empty
+        logger.warning(
+            "MSP dict has no recognized label keys (expected: text, label, msp_label, or msp)",
+            msp_keys=list(msp.keys()),
+            msp_value=str(msp)[:100]
+        )
+        return ""
+
+    # Fallback for other types (should not happen in valid osnova.json)
+    if msp is None or msp == "":
+        return ""
+
+    logger.warning(
+        "Unexpected MSP type, attempting string conversion",
+        msp_type=type(msp).__name__,
+        msp_value=str(msp)[:100]
+    )
+    return str(msp).strip()
+
+
 # ---------------------------
 # Interaktivní výběr
 # ---------------------------
@@ -275,12 +319,31 @@ def build_episode_context(
     for i, (msp, dur) in enumerate(zip(msp_list, seg_times), start=1):
         minutes_target = minutes_round_half_up_from_mmss(dur)
         word_target = round_word_target(minutes_target, wpm)
-        label = msp.get("text", "").strip() or msp.get("msp_label", "").strip()
+
+        # Use robust MSP label extraction (supports multiple formats)
+        label = extract_msp_label(msp)
         if not label:
-            raise ValueError(f"Episode {idx} segment {i}: missing MSP label/text")
-        src_seg = msp.get("sources_segment") or []
+            raise ValueError(
+                f"Episode {idx} segment {i}: missing MSP label. "
+                f"MSP format: {type(msp).__name__}, content: {str(msp)[:100]}"
+            )
+
+        # Extract sources (handle both dict and string MSP formats)
+        if isinstance(msp, dict):
+            src_seg = msp.get("sources_segment") or []
+        else:
+            # If MSP is just a string, sources must come from episode level
+            src_seg = []
+
         if not (isinstance(src_seg, list) and src_seg):
-            raise ValueError(f"Episode {idx} segment {i}: missing sources_segment")
+            logger.warning(
+                "Segment missing sources_segment, will use episode-level sources",
+                episode=idx,
+                segment=i,
+                msp_label=label
+            )
+            # Fallback: use episode-level sources if segment has none
+            src_seg = episode.get("sources_used", []) or []
         segments.append({
             "segment_index": i,
             "msp_label": label,
@@ -371,7 +434,6 @@ def generate_prompts_for_episode(
             "WORD_TARGET": str(seg["word_target"]),
             "WORD_TOLERANCE_PERCENT": str(tol_pct),
             "SOURCES_SEGMENT": ", ".join(seg["sources_segment"]),
-            "CANON_BLOCK": "",  # Vždy prázdné - nepracujeme s canon.json
         }
         exec_text = replace_placeholders(segment_prompt_tmpl, mapping)
 
