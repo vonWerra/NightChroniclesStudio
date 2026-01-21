@@ -495,7 +495,7 @@ class OutlineTab(QWidget):
         lay_api = QHBoxLayout(row_api)
         lay_api.setContentsMargins(0, 0, 0, 0)
         self.ed_model = QLineEdit(self)
-        self.ed_model.setPlaceholderText("gpt-4.1-mini")
+        self.ed_model.setPlaceholderText("gpt-5-mini")
         self.ds_temp = QDoubleSpinBox(self)
         self.ds_temp.setRange(0.0, 2.0)
         self.ds_temp.setSingleStep(0.1)
@@ -1943,7 +1943,7 @@ class FinalTab(QWidget):
         # Params
         form = QFormLayout()
         self.ed_model = QLineEdit(self)
-        self.ed_model.setPlaceholderText("gpt-5")
+        self.ed_model.setPlaceholderText("gpt-5.2")
         self.ed_style = QLineEdit("historicko-dokumentární, klidné tempo, čitelné i pro laika", self)
         self.ed_len = QLineEdit("1800-2200", self)
         self.ed_sent = QLineEdit("20-30 slov", self)

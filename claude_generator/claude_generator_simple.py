@@ -52,7 +52,7 @@ class SegmentResult:
 class Config:
     """Konfigurace aplikace"""
     api_key: str = os.getenv('ANTHROPIC_API_KEY', '')
-    model: str = os.getenv('CLAUDE_MODEL', 'claude-opus-4-1-20250805')
+    model: str = os.getenv('CLAUDE_MODEL', 'claude-opus-4-5-20251101')
     temperature: float = float(os.getenv('CLAUDE_TEMPERATURE', '0.3'))
     max_tokens: int = int(os.getenv('CLAUDE_MAX_TOKENS', '8000'))
     max_attempts: int = int(os.getenv('MAX_ATTEMPTS', '3'))

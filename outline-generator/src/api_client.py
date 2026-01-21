@@ -33,7 +33,7 @@ class APIClient:
     def __init__(
         self,
         api_key: str,
-        model: str = "gpt-4.1-mini",
+        model: str = "gpt-5-mini",
         temperature: float = 0.3,
         max_tokens: int = 6000,
         monitor: Optional[Any] = None,
@@ -57,18 +57,15 @@ class APIClient:
         self.max_tokens = max_tokens
         self.monitor = monitor
 
-        # Known valid models (as of 2024/2025)
+        # Known valid models (as of 2026)
         valid_models = [
-            "gpt-4.1-mini",
-            "gpt-4.1",
-            "gpt-4-turbo-preview",
-            "gpt-4-0125-preview",
-            "gpt-4-1106-preview",
-            "gpt-4",
+            "gpt-5.2",
+            "gpt-5",
+            "gpt-5-mini",
+            "gpt-4o",
             "gpt-4o-mini",
-            "gpt-3.5-turbo",
-            "gpt-3.5-turbo-0125",
-            "gpt-3.5-turbo-1106"
+            "gpt-4-turbo",
+            "gpt-4"
         ]
 
         if self.model not in valid_models:
